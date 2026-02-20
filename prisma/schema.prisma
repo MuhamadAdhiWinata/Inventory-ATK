@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../server/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ─────────────────────────────────────────
+// AUTH
+// ─────────────────────────────────────────
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  transactions InventoryTransaction[]
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+// ─────────────────────────────────────────
+// MASTER DATA
+// ─────────────────────────────────────────
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  subCategories SubCategory[]
+
+  @@map("categories")
+}
+
+model SubCategory {
+  id         Int      @id @default(autoincrement())
+  name       String
+  categoryId Int      @map("category_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  category Category @relation(fields: [categoryId], references: [id])
+  items    Item[]
+
+  @@unique([name, categoryId])
+  @@map("sub_categories")
+}
+
+model Unit {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  items Item[]
+
+  @@map("units")
+}
+
+model Item {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique @map("code")
+  name          String
+  subCategoryId Int      @map("sub_category_id")
+  unitId        Int      @map("unit_id")
+  currentStock  Int      @default(0) @map("current_stock")
+  minStock      Int      @default(0) @map("min_stock")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  subCategory  SubCategory            @relation(fields: [subCategoryId], references: [id])
+  unit         Unit                   @relation(fields: [unitId], references: [id])
+  transactions InventoryTransaction[]
+
+  @@map("items")
+}
+
+// ─────────────────────────────────────────
+// INVENTORY TRANSACTION
+// ─────────────────────────────────────────
+
+model InventoryTransaction {
+  id        Int             @id @default(autoincrement())
+  itemId    Int             @map("item_id")
+  userId    Int             @map("user_id")
+  type      TransactionType
+  quantity  Int
+  note      String?
+  date      DateTime        @default(now())
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+
+  item Item @relation(fields: [itemId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("inventory_transactions")
+}
+
+enum TransactionType {
+  IN
+  OUT
+}
