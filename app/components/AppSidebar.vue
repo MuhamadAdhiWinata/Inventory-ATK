@@ -184,7 +184,7 @@ const navMain = computed<NavItem[]>(() => [
   },
   {
     title: 'Pengaturan',
-    url: '/settings',
+    url: '#',
     icon: Settings,
   },
 ])

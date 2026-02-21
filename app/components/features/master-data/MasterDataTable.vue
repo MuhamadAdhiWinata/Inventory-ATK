@@ -42,6 +42,23 @@
             />
           </div>
         </template>
+        <template #cell-actions="{ row }">
+          <div class="flex gap-2">
+            <Button
+              @click="emit('edit', row)"
+              class=" rounded-md text-sm h-8 w-8 transition-colors"
+            >
+              <PencilIcon class="h-4 w-4" />
+            </Button>
+            <Button
+              variant="destructive"
+              @click="emit('delete', row)"
+              class=" rounded-md text-sm h-8 w-8 transition-colors"
+            >
+              <Trash2 class="h-4 w-4" />
+            </Button>
+          </div>
+        </template>
       </DataTable>
 
       <!-- Pagination -->
@@ -58,7 +75,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { AlertCircleIcon, AlertTriangleIcon } from 'lucide-vue-next'
+import { AlertCircleIcon, AlertTriangleIcon, PencilIcon, Trash2 } from 'lucide-vue-next'
 import type { MasterItem } from '#shared/types/IMasterData'
 import { masterDataService } from '@/services/masterDataService'
 import DataTable from '@/components/DataTable/DataTable.vue'
@@ -70,7 +87,7 @@ const items = ref<MasterItem[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const currentPage = ref(1)
-const itemsPerPage = 10
+const itemsPerPage = 8
 const totalItems = ref(0)
 
 // Filters
@@ -90,7 +107,8 @@ const tableColumns = [
   { key: 'satuan', label: 'Satuan' },
   { key: 'currentStock', label: 'Current Stock', sortable: true },
   { key: 'stokMin', label: 'Stok Min' },
-  { key: 'status', label: 'Status', sortable: true }
+  { key: 'status', label: 'Status', sortable: true },
+  { key: 'actions', label: 'Aksi', class: 'w-24' }
 ]
 
 // Mobile columns (hanya field penting)
@@ -99,7 +117,8 @@ const mobileColumns = [
   { key: 'namaBarang', label: 'Nama' },
   { key: 'kategori', label: 'Kategori' },
   { key: 'currentStock', label: 'Stock' },
-  { key: 'status', label: 'Status' }
+  { key: 'status', label: 'Status' },
+  { key: 'actions', label: 'Aksi' }
 ]
 
 // Filter items berdasarkan search dan status
@@ -159,6 +178,8 @@ const handlePageChange = (page: number) => {
   currentPage.value = page
   fetchData()
 }
+
+const emit = defineEmits<{ edit: [item: MasterItem], delete: [item: MasterItem] }>()
 
 // Initialize
 onMounted(() => {
