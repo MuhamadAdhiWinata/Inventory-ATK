@@ -45,6 +45,7 @@
       @retry="fetchData"
     />
 
+    <!-- Form Modal -->
     <MasterDataForm
       :is-open="modalOpen"
       :item="selectedItem"
@@ -53,6 +54,16 @@
       :satuan-list="satuanList"
       @close="modalOpen = false"
       @submit="handleFormSubmit"
+    />
+
+    <!-- Delete Confirmation Dialog -->
+    <ConfirmDialog
+      :is-open="deleteDialogOpen"
+      title="Hapus Barang"
+      :description="`Apakah Anda yakin ingin menghapus &quot;${itemToDelete?.namaBarang}&quot;? Tindakan ini tidak dapat dibatalkan.`"
+      :loading="deleting"
+      @confirm="handleConfirmDelete"
+      @cancel="deleteDialogOpen = false"
     />
   </main>
 </template>
@@ -69,6 +80,7 @@ import { masterDataService, type KategoriItem, type SubKategoriItem, type Satuan
 import MasterDataTable from '@/components/features/master-data/MasterDataTable.vue'
 import MasterDataFilters from '@/components/features/master-data/MasterDataFilters.vue'
 import MasterDataForm from '@/components/features/master-data/MasterDataForm.vue'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import { useToast } from '@/hooks/use-toast'
 
 const { toast } = useToast()
@@ -88,16 +100,21 @@ const activeFilters = ref({
   status: 'Semua'
 })
 
-// Modal state
+// Form modal state
 const modalOpen = ref(false)
 const selectedItem = ref<MasterItem | null>(null)
+
+// Delete dialog state
+const deleteDialogOpen = ref(false)
+const itemToDelete = ref<MasterItem | null>(null)
+const deleting = ref(false)
 
 // Lookup data
 const kategoriList = ref<KategoriItem[]>([])
 const subKategoriList = ref<SubKategoriItem[]>([])
 const satuanList = ref<SatuanItem[]>([])
 
-// Filter items client-side (search & status)
+// Filter items client-side
 const filteredItems = computed(() => {
   return items.value
     .filter(item => {
@@ -118,7 +135,7 @@ const filteredItems = computed(() => {
     }))
 })
 
-// Fetch items dari server
+// Fetch items
 const fetchData = async () => {
   loading.value = true
   error.value = null
@@ -181,9 +198,24 @@ function openEdit(item: MasterItem) {
 }
 
 function openDelete(item: MasterItem) {
-  if (confirm(`Apakah Anda yakin ingin menghapus "${item.namaBarang}"?`)) {
-    console.log('Delete item:', item)
-    // TODO: sambungkan ke BE delete
+  itemToDelete.value = item
+  deleteDialogOpen.value = true
+}
+
+async function handleConfirmDelete() {
+  if (!itemToDelete.value) return
+
+  deleting.value = true
+  try {
+    await $fetch(`/api/items/${itemToDelete.value.id}`, { method: 'DELETE' })
+    toast({ title: 'Berhasil', description: 'Barang berhasil dihapus', variant: 'success' })
+    deleteDialogOpen.value = false
+    itemToDelete.value = null
+    fetchData()
+  } catch (err: any) {
+    toast({ title: 'Gagal', description: err.message, variant: 'destructive' })
+  } finally {
+    deleting.value = false
   }
 }
 
