@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  inventory-atk:
+    container_name: inventory-atk
+    build: 
+      context: .
+    restart: always
+    # Mengambil semua variabel dari file .env (DATABASE_URL, dll)
+    env_file:
+      - .env
+    networks:
+      - tunnel-network
+
+networks:
+  tunnel-network:
+    external: true
