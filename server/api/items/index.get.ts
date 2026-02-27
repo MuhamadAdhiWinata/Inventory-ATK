@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
       JOIN categories c ON sc.category_id = c.id
       JOIN units u ON i.unit_id = u.id
       ${kategori && kategori !== 'Semua' ? `WHERE c.name = ?` : ''}
-      ORDER BY i.created_at ASC
+      ORDER BY i.created_at DESC
       LIMIT ? OFFSET ?
     `, ...(kategori && kategori !== 'Semua' ? [kategori, limit, offset] : [limit, offset])),
 

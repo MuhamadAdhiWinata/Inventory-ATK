@@ -1,13 +1,10 @@
-<!-- pages/MasterData.vue - FIXED -->
 <template>
   <main class="p-4 md:px-6">
     <!-- Header -->
     <div class="flex justify-between border-b pb-2 mb-2">
-      <div class="">
+      <div>
         <h1 class="text-2xl font-bold tracking-tight">Master Data Barang</h1>
-        <p class="text-muted-foreground">
-          Kelola data barang inventaris sekolah.
-        </p>
+        <p class="text-muted-foreground">Kelola data barang inventaris sekolah.</p>
       </div>
 
       <!-- Quick Actions -->
@@ -28,8 +25,25 @@
       </div>
     </div>
 
+    <!-- Filters -->
+    <MasterDataFilters
+      :kategori-list="kategoriList"
+      @filter-change="handleFilterChange"
+    />
+
     <!-- Main Table Component -->
-    <MasterDataTable @edit="openEdit" @delete="openDelete" />
+    <MasterDataTable
+      :items="filteredItems"
+      :loading="loading"
+      :error="error"
+      :current-page="currentPage"
+      :total-items="totalItems"
+      :items-per-page="itemsPerPage"
+      @edit="openEdit"
+      @delete="openDelete"
+      @page-change="handlePageChange"
+      @retry="fetchData"
+    />
 
     <MasterDataForm
       :is-open="modalOpen"
@@ -40,29 +54,121 @@
       @close="modalOpen = false"
       @submit="handleFormSubmit"
     />
-
   </main>
 </template>
 
 <script setup lang="ts">
 definePageMeta({
   layout: 'default',
-//   middleware: 'auth'
+  // middleware: 'auth'
 })
-import { ref, computed } from 'vue' // REMOVED: masterDataTable ref
-import { 
-  DownloadIcon,
-  PlusIcon
-} from 'lucide-vue-next'
-import MasterDataTable from '@/components/features/master-data/MasterDataTable.vue'
-import MasterDataForm from '~/components/features/master-data/MasterDataForm.vue'
 
-const totalItems = ref(15)
+import { DownloadIcon, PlusIcon } from 'lucide-vue-next'
+import type { MasterItem } from '#shared/types/IMasterData'
+import { masterDataService, type KategoriItem, type SubKategoriItem, type SatuanItem } from '@/services/masterDataService'
+import MasterDataTable from '@/components/features/master-data/MasterDataTable.vue'
+import MasterDataFilters from '@/components/features/master-data/MasterDataFilters.vue'
+import MasterDataForm from '@/components/features/master-data/MasterDataForm.vue'
+import { useToast } from '@/hooks/use-toast'
+
+const { toast } = useToast()
+
+// Table state
+const items = ref<MasterItem[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
+const currentPage = ref(1)
+const itemsPerPage = 8
+const totalItems = ref(0)
+
+// Filter state
+const activeFilters = ref({
+  kategori: 'Semua',
+  search: '',
+  status: 'Semua'
+})
+
+// Modal state
 const modalOpen = ref(false)
 const selectedItem = ref<MasterItem | null>(null)
-const kategoriList = ref([])
-const subKategoriList = ref([])
-const satuanList = ref([])
+
+// Lookup data
+const kategoriList = ref<KategoriItem[]>([])
+const subKategoriList = ref<SubKategoriItem[]>([])
+const satuanList = ref<SatuanItem[]>([])
+
+// Filter items client-side (search & status)
+const filteredItems = computed(() => {
+  return items.value
+    .filter(item => {
+      const matchesSearch =
+        !activeFilters.value.search ||
+        item.kodeBarang.toLowerCase().includes(activeFilters.value.search.toLowerCase()) ||
+        item.namaBarang.toLowerCase().includes(activeFilters.value.search.toLowerCase())
+
+      const matchesStatus =
+        activeFilters.value.status === 'Semua' ||
+        item.status === activeFilters.value.status
+
+      return matchesSearch && matchesStatus
+    })
+    .map((item, i) => ({
+      ...item,
+      index: i + 1 + (currentPage.value - 1) * itemsPerPage
+    }))
+})
+
+// Fetch items dari server
+const fetchData = async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    const response = await masterDataService.getItems(
+      currentPage.value,
+      itemsPerPage,
+      activeFilters.value.kategori !== 'Semua' ? activeFilters.value.kategori : undefined
+    )
+    if (response.success) {
+      items.value = response.data
+      totalItems.value = response.total
+    }
+  } catch (err) {
+    error.value = 'Gagal memuat data master. Silakan coba lagi.'
+    console.error('Error fetching master data:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Load lookup data + fetch items saat mount
+onMounted(async () => {
+  try {
+    const [cats, subCats, units] = await Promise.all([
+      masterDataService.getCategories(),
+      masterDataService.getSubCategories(),
+      masterDataService.getUnits(),
+    ])
+    kategoriList.value = cats
+    subKategoriList.value = subCats
+    satuanList.value = units
+  } catch (err) {
+    console.error('Failed to load lookup data:', err)
+  }
+
+  fetchData()
+})
+
+function handleFilterChange(filters: any) {
+  activeFilters.value = filters
+  currentPage.value = 1
+  fetchData()
+}
+
+function handlePageChange(page: number) {
+  currentPage.value = page
+  fetchData()
+}
 
 function openAdd() {
   selectedItem.value = null
@@ -77,21 +183,29 @@ function openEdit(item: MasterItem) {
 function openDelete(item: MasterItem) {
   if (confirm(`Apakah Anda yakin ingin menghapus "${item.namaBarang}"?`)) {
     console.log('Delete item:', item)
+    // TODO: sambungkan ke BE delete
   }
 }
 
 async function handleFormSubmit(data: Record<string, any>) {
-  console.log('submit', data)
-  modalOpen.value = false
+  try {
+    if (selectedItem.value) {
+      await $fetch(`/api/items/${selectedItem.value.id}`, {
+        method: 'PUT',
+        body: data
+      })
+      toast({ title: 'Berhasil', description: 'Barang berhasil diperbarui', variant: 'success' })
+    } else {
+      await $fetch('/api/items', {
+        method: 'POST',
+        body: data
+      })
+      toast({ title: 'Berhasil', description: 'Barang berhasil ditambahkan', variant: 'success' })
+    }
+    modalOpen.value = false
+    fetchData()
+  } catch (err: any) {
+    toast({ title: 'Gagal', description: err.message, variant: 'destructive' })
+  }
 }
-
-// Stats calculation
-const needRestockCount = computed(() => {
-  return 7
-})
-
-const safeStockCount = computed(() => {
-  return totalItems.value - needRestockCount.value
-})
-
 </script>

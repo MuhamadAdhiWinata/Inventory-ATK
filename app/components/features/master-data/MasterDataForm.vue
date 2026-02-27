@@ -1,4 +1,3 @@
-<!-- app/components/features/master-data/MasterDataForm.vue -->
 <template>
   <Teleport to="body">
     <Transition name="modal">
@@ -31,22 +30,6 @@
 
           <!-- Body -->
           <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
-            <!-- Kode Barang -->
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-card-foreground">
-                Kode Barang <span class="text-destructive">*</span>
-              </label>
-              <input
-                v-model="form.kodeBarang"
-                type="text"
-                placeholder="Contoh: ATK-031"
-                :disabled="isEditMode"
-                class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
-                :class="{ 'border-destructive': errors.kodeBarang }"
-              />
-              <p v-if="errors.kodeBarang" class="text-xs text-destructive">{{ errors.kodeBarang }}</p>
-            </div>
-
             <!-- Nama Barang -->
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-card-foreground">
@@ -69,12 +52,12 @@
                   Kategori <span class="text-destructive">*</span>
                 </label>
                 <select
-                  v-model="form.kategoriId"
+                  :value="form.kategoriId"
+                  @change="(e) => { form.kategoriId = Number((e.target as HTMLSelectElement).value); form.subKategoriId = null }"
                   class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   :class="{ 'border-destructive': errors.kategoriId }"
-                  @change="form.subKategoriId = ''"
                 >
-                  <option value="" disabled>Pilih kategori</option>
+                  <option :value="null" disabled>Pilih kategori</option>
                   <option v-for="k in kategoriList" :key="k.id" :value="k.id">
                     {{ k.name }}
                   </option>
@@ -87,12 +70,13 @@
                   Sub Kategori <span class="text-destructive">*</span>
                 </label>
                 <select
-                  v-model="form.subKategoriId"
+                  :value="form.subKategoriId"
+                  @change="(e) => form.subKategoriId = Number((e.target as HTMLSelectElement).value)"
                   class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
                   :class="{ 'border-destructive': errors.subKategoriId }"
                   :disabled="!form.kategoriId"
                 >
-                  <option value="" disabled>Pilih sub kategori</option>
+                  <option :value="null" disabled>Pilih sub kategori</option>
                   <option v-for="sk in filteredSubKategori" :key="sk.id" :value="sk.id">
                     {{ sk.name }}
                   </option>
@@ -107,11 +91,12 @@
                 Satuan <span class="text-destructive">*</span>
               </label>
               <select
-                v-model="form.satuanId"
+                :value="form.satuanId"
+                @change="(e) => form.satuanId = Number((e.target as HTMLSelectElement).value)"
                 class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 :class="{ 'border-destructive': errors.satuanId }"
               >
-                <option value="" disabled>Pilih satuan</option>
+                <option :value="null" disabled>Pilih satuan</option>
                 <option v-for="u in satuanList" :key="u.id" :value="u.id">
                   {{ u.name }}
                 </option>
@@ -183,22 +168,7 @@
 <script setup lang="ts">
 import { X } from 'lucide-vue-next'
 import type { MasterItem } from '#shared/types/IMasterData'
-
-interface KategoriItem {
-  id: number
-  name: string
-}
-
-interface SubKategoriItem {
-  id: number
-  name: string
-  categoryId: number
-}
-
-interface SatuanItem {
-  id: number
-  name: string
-}
+import type { KategoriItem, SubKategoriItem, SatuanItem } from '@/services/masterDataService'
 
 interface Props {
   isOpen: boolean
@@ -221,11 +191,10 @@ const isEditMode = computed(() => !!props.item)
 const submitting = ref(false)
 
 const defaultForm = {
-  kodeBarang: '',
   namaBarang: '',
-  kategoriId: '' as number | '',
-  subKategoriId: '' as number | '',
-  satuanId: '' as number | '',
+  kategoriId: null as number | null,
+  subKategoriId: null as number | null,
+  satuanId: null as number | null,
   currentStock: 0,
   stokMin: 0,
 }
@@ -235,17 +204,25 @@ const errors = reactive<Record<string, string>>({})
 
 const filteredSubKategori = computed(() => {
   if (!form.kategoriId) return []
-  return props.subKategoriList.filter(sk => sk.categoryId === form.kategoriId)
+  return props.subKategoriList.filter(sk => sk.categoryId === Number(form.kategoriId))
 })
 
 // Populate form saat edit
 watch(() => props.item, (item) => {
   if (item) {
-    form.kodeBarang = item.kodeBarang
     form.namaBarang = item.namaBarang
     form.currentStock = item.currentStock
     form.stokMin = item.stokMin
-    // kategoriId dan subKategoriId perlu di-resolve dari nama — akan dihandle saat BE ready
+
+    const subKat = props.subKategoriList.find(sk => sk.name === item.subKategori)
+    if (subKat) {
+      form.kategoriId = subKat.categoryId
+      form.subKategoriId = subKat.id
+    }
+
+    const satuan = props.satuanList.find(u => u.name === item.satuan)
+    if (satuan) form.satuanId = satuan.id
+
   } else {
     Object.assign(form, defaultForm)
   }
@@ -262,7 +239,6 @@ watch(() => props.isOpen, (open) => {
 function validate(): boolean {
   Object.keys(errors).forEach(k => delete errors[k])
 
-  if (!form.kodeBarang.trim()) errors.kodeBarang = 'Kode barang wajib diisi'
   if (!form.namaBarang.trim()) errors.namaBarang = 'Nama barang wajib diisi'
   if (!form.kategoriId) errors.kategoriId = 'Kategori wajib dipilih'
   if (!form.subKategoriId) errors.subKategoriId = 'Sub kategori wajib dipilih'

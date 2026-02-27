@@ -1,4 +1,3 @@
-<!-- features/master-data/MasterDataFilters.vue - FIXED -->
 <template>
   <div class="flex flex-col md:flex-row gap-4 mb-6">
     <!-- Category Filter -->
@@ -9,8 +8,9 @@
         @change="emitFilters"
         class="w-full md:w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
-        <option v-for="category in categories" :key="category" :value="category">
-          {{ category }}
+        <option value="Semua">Semua Kategori</option>
+        <option v-for="k in kategoriList" :key="k.id" :value="k.name">
+          {{ k.name }}
         </option>
       </select>
     </div>
@@ -46,9 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue' // REMOVED: watch import tidak digunakan
 import { SearchIcon } from 'lucide-vue-next'
-import { masterDataService } from '@/services/masterDataService'
+import type { KategoriItem } from '@/services/masterDataService'
 
 interface Filters {
   kategori: string
@@ -56,30 +55,22 @@ interface Filters {
   status: string
 }
 
-const categories = ref<string[]>(['Semua'])
-const selectedCategory = ref('Semua')
-const searchQuery = ref('')
-const selectedStatus = ref('Semua')
+defineProps<{
+  kategoriList: KategoriItem[]
+}>()
 
 const emit = defineEmits<{
   'filter-change': [filters: Filters]
 }>()
 
-// Load categories
-const loadCategories = async () => {
-  try {
-    const cats = await masterDataService.getCategories()
-    categories.value = cats
-  } catch (error) {
-    console.error('Failed to load categories:', error)
-  }
-}
+const selectedCategory = ref('Semua')
+const searchQuery = ref('')
+const selectedStatus = ref('Semua')
 
-// Debounced search
-let searchTimeout: number // CHANGED: dari NodeJS.Timeout ke number
+let searchTimeout: number
 const onSearchInput = () => {
   clearTimeout(searchTimeout)
-  searchTimeout = window.setTimeout(() => { // CHANGED: gunakan window.setTimeout
+  searchTimeout = window.setTimeout(() => {
     emitFilters()
   }, 300)
 }
@@ -91,7 +82,4 @@ const emitFilters = () => {
     status: selectedStatus.value
   })
 }
-
-// Initialize
-loadCategories()
 </script>
