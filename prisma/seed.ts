@@ -42,69 +42,54 @@ async function main() {
   console.log('✅ Users seeded:', { admin: admin.email, staff: staff.email })
 
   // ─────────────────────────────────────────
-  // CATEGORIES
+  // GUDANG
   // ─────────────────────────────────────────
-  const categories = await Promise.all([
-    prisma.category.upsert({
-      where: { name: 'Alat Tulis' },
+  const gudang = await Promise.all([
+    prisma.gudang.upsert({
+      where: { name: 'Gudang Utama' },
       update: {},
-      create: { name: 'Alat Tulis' },
+      create: { name: 'Gudang Utama', location: 'Gedung A Lt. 1' },
     }),
-    prisma.category.upsert({
-      where: { name: 'Kertas' },
+    prisma.gudang.upsert({
+      where: { name: 'Gudang Cadangan' },
       update: {},
-      create: { name: 'Kertas' },
+      create: { name: 'Gudang Cadangan', location: 'Gedung B Lt. 2' },
     }),
-    prisma.category.upsert({
-      where: { name: 'Peralatan Kantor' },
+    prisma.gudang.upsert({
+      where: { name: 'Gudang TU' },
       update: {},
-      create: { name: 'Peralatan Kantor' },
+      create: { name: 'Gudang TU', location: 'Ruang Tata Usaha' },
     }),
   ])
 
+  const [gudangUtama, gudangCadangan, gudangTU] = gudang
+  console.log('✅ Gudang seeded:', gudang.map(g => g.name))
+
+  // ─────────────────────────────────────────
+  // CATEGORIES
+  // ─────────────────────────────────────────
+  const categories = await Promise.all([
+    prisma.category.upsert({ where: { name: 'Alat Tulis' }, update: {}, create: { name: 'Alat Tulis' } }),
+    prisma.category.upsert({ where: { name: 'Kertas' }, update: {}, create: { name: 'Kertas' } }),
+    prisma.category.upsert({ where: { name: 'Peralatan Kantor' }, update: {}, create: { name: 'Peralatan Kantor' } }),
+  ])
+
+  const [alatTulis, kertas, peralatanKantor] = categories
   console.log('✅ Categories seeded:', categories.map(c => c.name))
 
   // ─────────────────────────────────────────
   // SUB CATEGORIES
   // ─────────────────────────────────────────
-  const [alatTulis, kertas, peralatanKantor] = categories
-
   const subCategories = await Promise.all([
-    // Alat Tulis
-    prisma.subCategory.upsert({
-      where: { name_categoryId: { name: 'Pena & Pensil', categoryId: alatTulis.id } },
-      update: {},
-      create: { name: 'Pena & Pensil', categoryId: alatTulis.id },
-    }),
-    prisma.subCategory.upsert({
-      where: { name_categoryId: { name: 'Spidol & Marker', categoryId: alatTulis.id } },
-      update: {},
-      create: { name: 'Spidol & Marker', categoryId: alatTulis.id },
-    }),
-    // Kertas
-    prisma.subCategory.upsert({
-      where: { name_categoryId: { name: 'Kertas HVS', categoryId: kertas.id } },
-      update: {},
-      create: { name: 'Kertas HVS', categoryId: kertas.id },
-    }),
-    prisma.subCategory.upsert({
-      where: { name_categoryId: { name: 'Kertas Karton', categoryId: kertas.id } },
-      update: {},
-      create: { name: 'Kertas Karton', categoryId: kertas.id },
-    }),
-    // Peralatan Kantor
-    prisma.subCategory.upsert({
-      where: { name_categoryId: { name: 'Stapler & Perforator', categoryId: peralatanKantor.id } },
-      update: {},
-      create: { name: 'Stapler & Perforator', categoryId: peralatanKantor.id },
-    }),
-    prisma.subCategory.upsert({
-      where: { name_categoryId: { name: 'Gunting & Cutter', categoryId: peralatanKantor.id } },
-      update: {},
-      create: { name: 'Gunting & Cutter', categoryId: peralatanKantor.id },
-    }),
+    prisma.subCategory.upsert({ where: { name_categoryId: { name: 'Pena & Pensil', categoryId: alatTulis.id } }, update: {}, create: { name: 'Pena & Pensil', categoryId: alatTulis.id } }),
+    prisma.subCategory.upsert({ where: { name_categoryId: { name: 'Spidol & Marker', categoryId: alatTulis.id } }, update: {}, create: { name: 'Spidol & Marker', categoryId: alatTulis.id } }),
+    prisma.subCategory.upsert({ where: { name_categoryId: { name: 'Kertas HVS', categoryId: kertas.id } }, update: {}, create: { name: 'Kertas HVS', categoryId: kertas.id } }),
+    prisma.subCategory.upsert({ where: { name_categoryId: { name: 'Kertas Karton', categoryId: kertas.id } }, update: {}, create: { name: 'Kertas Karton', categoryId: kertas.id } }),
+    prisma.subCategory.upsert({ where: { name_categoryId: { name: 'Stapler & Perforator', categoryId: peralatanKantor.id } }, update: {}, create: { name: 'Stapler & Perforator', categoryId: peralatanKantor.id } }),
+    prisma.subCategory.upsert({ where: { name_categoryId: { name: 'Gunting & Cutter', categoryId: peralatanKantor.id } }, update: {}, create: { name: 'Gunting & Cutter', categoryId: peralatanKantor.id } }),
   ])
 
+  const [subPena, subSpidol, subHVS, subKarton, subStapler, subGunting] = subCategories
   console.log('✅ SubCategories seeded:', subCategories.map(s => s.name))
 
   // ─────────────────────────────────────────
@@ -118,14 +103,12 @@ async function main() {
     prisma.unit.upsert({ where: { name: 'Pack' }, update: {}, create: { name: 'Pack' } }),
   ])
 
+  const [pcs, rim, box, lusin, pack] = units
   console.log('✅ Units seeded:', units.map(u => u.name))
 
   // ─────────────────────────────────────────
   // ITEMS (30 items)
   // ─────────────────────────────────────────
-  const [subPena, subSpidol, subHVS, subKarton, subStapler, subGunting] = subCategories
-  const [pcs, rim, box, lusin, pack] = units
-
   const items = await Promise.all([
     // Alat Tulis - Pena & Pensil (10 items)
     prisma.item.upsert({ where: { code: 'ATK-001' }, update: {}, create: { code: 'ATK-001', name: 'Pulpen Pilot G2', subCategoryId: subPena.id, unitId: box.id, currentStock: 50, minStock: 10 } }),
@@ -173,25 +156,48 @@ async function main() {
   console.log('✅ Items seeded:', items.length, 'items')
 
   // ─────────────────────────────────────────
-  // INVENTORY TRANSACTIONS (sample)
+  // INVENTORY TRANSACTIONS (dengan transaction_code & gudang)
   // ─────────────────────────────────────────
-  await prisma.inventoryTransaction.createMany({
-    data: [
-      { itemId: items[0].id, userId: admin.id, type: 'IN', quantity: 50, note: 'Stock awal', date: new Date('2026-01-01') },
-      { itemId: items[1].id, userId: admin.id, type: 'IN', quantity: 20, note: 'Stock awal', date: new Date('2026-01-01') },
-      { itemId: items[2].id, userId: admin.id, type: 'IN', quantity: 30, note: 'Stock awal', date: new Date('2026-01-01') },
-      { itemId: items[3].id, userId: admin.id, type: 'IN', quantity: 15, note: 'Stock awal', date: new Date('2026-01-01') },
-      { itemId: items[4].id, userId: admin.id, type: 'IN', quantity: 25, note: 'Stock awal', date: new Date('2026-01-01') },
-      { itemId: items[10].id, userId: admin.id, type: 'IN', quantity: 15, note: 'Stock awal', date: new Date('2026-01-01') },
-      { itemId: items[15].id, userId: admin.id, type: 'IN', quantity: 10, note: 'Stock awal', date: new Date('2026-01-01') },
-      // Transaksi keluar
-      { itemId: items[1].id, userId: staff.id, type: 'OUT', quantity: 12, note: 'Dipakai kelas X', date: new Date('2026-01-15') },
-      { itemId: items[3].id, userId: staff.id, type: 'OUT', quantity: 11, note: 'Dipakai administrasi', date: new Date('2026-01-20') },
-      { itemId: items[6].id, userId: staff.id, type: 'OUT', quantity: 8, note: 'Dipakai lab', date: new Date('2026-02-01') },
-    ],
-  })
+  const txData = [
+    // IN
+    { code: 'IN-001', itemId: items[0].id,  userId: admin.id, type: 'IN' as const, gudangId: gudangUtama.id,    quantity: 50, note: 'Stock awal',         description: 'Pengadaan awal tahun', date: new Date('2026-01-01') },
+    { code: 'IN-002', itemId: items[1].id,  userId: admin.id, type: 'IN' as const, gudangId: gudangUtama.id,    quantity: 20, note: 'Stock awal',         description: 'Pengadaan awal tahun', date: new Date('2026-01-01') },
+    { code: 'IN-003', itemId: items[2].id,  userId: admin.id, type: 'IN' as const, gudangId: gudangUtama.id,    quantity: 30, note: 'Stock awal',         description: 'Pengadaan awal tahun', date: new Date('2026-01-01') },
+    { code: 'IN-004', itemId: items[3].id,  userId: admin.id, type: 'IN' as const, gudangId: gudangCadangan.id, quantity: 15, note: 'Stock awal',         description: 'Pengadaan awal tahun', date: new Date('2026-01-01') },
+    { code: 'IN-005', itemId: items[4].id,  userId: admin.id, type: 'IN' as const, gudangId: gudangUtama.id,    quantity: 25, note: 'Stock awal',         description: 'Pengadaan awal tahun', date: new Date('2026-01-01') },
+    { code: 'IN-006', itemId: items[10].id, userId: admin.id, type: 'IN' as const, gudangId: gudangTU.id,       quantity: 15, note: 'Pembelian rutin',    description: 'Pembelian semester genap', date: new Date('2026-01-10') },
+    { code: 'IN-007', itemId: items[15].id, userId: staff.id, type: 'IN' as const, gudangId: gudangUtama.id,    quantity: 10, note: 'Restock kertas',     description: 'Restock bulanan',     date: new Date('2026-01-15') },
+    { code: 'IN-008', itemId: items[16].id, userId: staff.id, type: 'IN' as const, gudangId: gudangUtama.id,    quantity: 5,  note: 'Restock kertas',     description: 'Restock bulanan',     date: new Date('2026-01-15') },
+    { code: 'IN-009', itemId: items[5].id,  userId: staff.id, type: 'IN' as const, gudangId: gudangTU.id,       quantity: 10, note: 'Pembelian tambahan', description: null,                  date: new Date('2026-02-01') },
+    { code: 'IN-010', itemId: items[23].id, userId: admin.id, type: 'IN' as const, gudangId: gudangUtama.id,    quantity: 20, note: 'Stock awal',         description: 'Pengadaan peralatan', date: new Date('2026-02-05') },
 
-  console.log('✅ Transactions seeded')
+    // OUT
+    { code: 'OUT-001', itemId: items[1].id,  userId: staff.id, type: 'OUT' as const, gudangId: gudangUtama.id,    quantity: 12, note: 'Dipakai kelas X',       description: 'Distribusi ke kelas',  date: new Date('2026-01-15') },
+    { code: 'OUT-002', itemId: items[3].id,  userId: staff.id, type: 'OUT' as const, gudangId: gudangCadangan.id, quantity: 11, note: 'Dipakai administrasi',   description: 'Kebutuhan TU',         date: new Date('2026-01-20') },
+    { code: 'OUT-003', itemId: items[6].id,  userId: staff.id, type: 'OUT' as const, gudangId: gudangUtama.id,    quantity: 8,  note: 'Dipakai lab',            description: 'Kebutuhan lab komputer', date: new Date('2026-02-01') },
+    { code: 'OUT-004', itemId: items[15].id, userId: staff.id, type: 'OUT' as const, gudangId: gudangUtama.id,    quantity: 3,  note: 'Cetak dokumen rapat',    description: null,                   date: new Date('2026-02-10') },
+    { code: 'OUT-005', itemId: items[10].id, userId: staff.id, type: 'OUT' as const, gudangId: gudangTU.id,       quantity: 5,  note: 'Dipakai kelas XI',       description: 'Distribusi ke kelas',  date: new Date('2026-02-15') },
+  ]
+
+  for (const tx of txData) {
+    await prisma.inventoryTransaction.upsert({
+      where: { transactionCode: tx.code },
+      update: {},
+      create: {
+        transactionCode: tx.code,
+        itemId: tx.itemId,
+        userId: tx.userId,
+        type: tx.type,
+        gudangId: tx.gudangId,
+        quantity: tx.quantity,
+        note: tx.note,
+        description: tx.description,
+        date: tx.date,
+      },
+    })
+  }
+
+  console.log('✅ Transactions seeded:', txData.length, 'transactions')
   console.log('')
   console.log('🎉 Seeding completed!')
   console.log('')

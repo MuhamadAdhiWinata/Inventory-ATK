@@ -389,6 +389,7 @@ export const ModelName = {
   SubCategory: 'SubCategory',
   Unit: 'Unit',
   Item: 'Item',
+  Gudang: 'Gudang',
   InventoryTransaction: 'InventoryTransaction'
 } as const
 
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "category" | "subCategory" | "unit" | "item" | "inventoryTransaction"
+    modelProps: "user" | "category" | "subCategory" | "unit" | "item" | "gudang" | "inventoryTransaction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -739,6 +740,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Gudang: {
+      payload: Prisma.$GudangPayload<ExtArgs>
+      fields: Prisma.GudangFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GudangFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GudangFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload>
+        }
+        findFirst: {
+          args: Prisma.GudangFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GudangFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload>
+        }
+        findMany: {
+          args: Prisma.GudangFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload>[]
+        }
+        create: {
+          args: Prisma.GudangCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload>
+        }
+        createMany: {
+          args: Prisma.GudangCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.GudangDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload>
+        }
+        update: {
+          args: Prisma.GudangUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload>
+        }
+        deleteMany: {
+          args: Prisma.GudangDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GudangUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.GudangUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GudangPayload>
+        }
+        aggregate: {
+          args: Prisma.GudangAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGudang>
+        }
+        groupBy: {
+          args: Prisma.GudangGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GudangGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GudangCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GudangCountAggregateOutputType> | number
+        }
+      }
+    }
     InventoryTransaction: {
       payload: Prisma.$InventoryTransactionPayload<ExtArgs>
       fields: Prisma.InventoryTransactionFieldRefs
@@ -903,13 +970,27 @@ export const ItemScalarFieldEnum = {
 export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof ItemScalarFieldEnum]
 
 
+export const GudangScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  location: 'location',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GudangScalarFieldEnum = (typeof GudangScalarFieldEnum)[keyof typeof GudangScalarFieldEnum]
+
+
 export const InventoryTransactionScalarFieldEnum = {
   id: 'id',
   itemId: 'itemId',
   userId: 'userId',
+  gudangId: 'gudangId',
   type: 'type',
+  transactionCode: 'transactionCode',
   quantity: 'quantity',
   note: 'note',
+  description: 'description',
   date: 'date',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -972,8 +1053,18 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
+export const GudangOrderByRelevanceFieldEnum = {
+  name: 'name',
+  location: 'location'
+} as const
+
+export type GudangOrderByRelevanceFieldEnum = (typeof GudangOrderByRelevanceFieldEnum)[keyof typeof GudangOrderByRelevanceFieldEnum]
+
+
 export const InventoryTransactionOrderByRelevanceFieldEnum = {
-  note: 'note'
+  transactionCode: 'transactionCode',
+  note: 'note',
+  description: 'description'
 } as const
 
 export type InventoryTransactionOrderByRelevanceFieldEnum = (typeof InventoryTransactionOrderByRelevanceFieldEnum)[keyof typeof InventoryTransactionOrderByRelevanceFieldEnum]
@@ -1126,6 +1217,7 @@ export type GlobalOmitConfig = {
   subCategory?: Prisma.SubCategoryOmit
   unit?: Prisma.UnitOmit
   item?: Prisma.ItemOmit
+  gudang?: Prisma.GudangOmit
   inventoryTransaction?: Prisma.InventoryTransactionOmit
 }
 

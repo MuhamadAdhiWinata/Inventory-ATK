@@ -56,6 +56,7 @@ export const ModelName = {
   SubCategory: 'SubCategory',
   Unit: 'Unit',
   Item: 'Item',
+  Gudang: 'Gudang',
   InventoryTransaction: 'InventoryTransaction'
 } as const
 
@@ -134,13 +135,27 @@ export const ItemScalarFieldEnum = {
 export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof ItemScalarFieldEnum]
 
 
+export const GudangScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  location: 'location',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GudangScalarFieldEnum = (typeof GudangScalarFieldEnum)[keyof typeof GudangScalarFieldEnum]
+
+
 export const InventoryTransactionScalarFieldEnum = {
   id: 'id',
   itemId: 'itemId',
   userId: 'userId',
+  gudangId: 'gudangId',
   type: 'type',
+  transactionCode: 'transactionCode',
   quantity: 'quantity',
   note: 'note',
+  description: 'description',
   date: 'date',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -203,8 +218,18 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
+export const GudangOrderByRelevanceFieldEnum = {
+  name: 'name',
+  location: 'location'
+} as const
+
+export type GudangOrderByRelevanceFieldEnum = (typeof GudangOrderByRelevanceFieldEnum)[keyof typeof GudangOrderByRelevanceFieldEnum]
+
+
 export const InventoryTransactionOrderByRelevanceFieldEnum = {
-  note: 'note'
+  transactionCode: 'transactionCode',
+  note: 'note',
+  description: 'description'
 } as const
 
 export type InventoryTransactionOrderByRelevanceFieldEnum = (typeof InventoryTransactionOrderByRelevanceFieldEnum)[keyof typeof InventoryTransactionOrderByRelevanceFieldEnum]

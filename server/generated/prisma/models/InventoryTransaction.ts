@@ -30,6 +30,7 @@ export type InventoryTransactionAvgAggregateOutputType = {
   id: number | null
   itemId: number | null
   userId: number | null
+  gudangId: number | null
   quantity: number | null
 }
 
@@ -37,6 +38,7 @@ export type InventoryTransactionSumAggregateOutputType = {
   id: number | null
   itemId: number | null
   userId: number | null
+  gudangId: number | null
   quantity: number | null
 }
 
@@ -44,9 +46,12 @@ export type InventoryTransactionMinAggregateOutputType = {
   id: number | null
   itemId: number | null
   userId: number | null
+  gudangId: number | null
   type: $Enums.TransactionType | null
+  transactionCode: string | null
   quantity: number | null
   note: string | null
+  description: string | null
   date: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -56,9 +61,12 @@ export type InventoryTransactionMaxAggregateOutputType = {
   id: number | null
   itemId: number | null
   userId: number | null
+  gudangId: number | null
   type: $Enums.TransactionType | null
+  transactionCode: string | null
   quantity: number | null
   note: string | null
+  description: string | null
   date: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -68,9 +76,12 @@ export type InventoryTransactionCountAggregateOutputType = {
   id: number
   itemId: number
   userId: number
+  gudangId: number
   type: number
+  transactionCode: number
   quantity: number
   note: number
+  description: number
   date: number
   createdAt: number
   updatedAt: number
@@ -82,6 +93,7 @@ export type InventoryTransactionAvgAggregateInputType = {
   id?: true
   itemId?: true
   userId?: true
+  gudangId?: true
   quantity?: true
 }
 
@@ -89,6 +101,7 @@ export type InventoryTransactionSumAggregateInputType = {
   id?: true
   itemId?: true
   userId?: true
+  gudangId?: true
   quantity?: true
 }
 
@@ -96,9 +109,12 @@ export type InventoryTransactionMinAggregateInputType = {
   id?: true
   itemId?: true
   userId?: true
+  gudangId?: true
   type?: true
+  transactionCode?: true
   quantity?: true
   note?: true
+  description?: true
   date?: true
   createdAt?: true
   updatedAt?: true
@@ -108,9 +124,12 @@ export type InventoryTransactionMaxAggregateInputType = {
   id?: true
   itemId?: true
   userId?: true
+  gudangId?: true
   type?: true
+  transactionCode?: true
   quantity?: true
   note?: true
+  description?: true
   date?: true
   createdAt?: true
   updatedAt?: true
@@ -120,9 +139,12 @@ export type InventoryTransactionCountAggregateInputType = {
   id?: true
   itemId?: true
   userId?: true
+  gudangId?: true
   type?: true
+  transactionCode?: true
   quantity?: true
   note?: true
+  description?: true
   date?: true
   createdAt?: true
   updatedAt?: true
@@ -219,9 +241,12 @@ export type InventoryTransactionGroupByOutputType = {
   id: number
   itemId: number
   userId: number
+  gudangId: number | null
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note: string | null
+  description: string | null
   date: Date
   createdAt: Date
   updatedAt: Date
@@ -254,55 +279,70 @@ export type InventoryTransactionWhereInput = {
   id?: Prisma.IntFilter<"InventoryTransaction"> | number
   itemId?: Prisma.IntFilter<"InventoryTransaction"> | number
   userId?: Prisma.IntFilter<"InventoryTransaction"> | number
+  gudangId?: Prisma.IntNullableFilter<"InventoryTransaction"> | number | null
   type?: Prisma.EnumTransactionTypeFilter<"InventoryTransaction"> | $Enums.TransactionType
+  transactionCode?: Prisma.StringFilter<"InventoryTransaction"> | string
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
   note?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
+  description?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   date?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
   item?: Prisma.XOR<Prisma.ItemScalarRelationFilter, Prisma.ItemWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  gudang?: Prisma.XOR<Prisma.GudangNullableScalarRelationFilter, Prisma.GudangWhereInput> | null
 }
 
 export type InventoryTransactionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   itemId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  gudangId?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
+  transactionCode?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   date?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   item?: Prisma.ItemOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
+  gudang?: Prisma.GudangOrderByWithRelationInput
   _relevance?: Prisma.InventoryTransactionOrderByRelevanceInput
 }
 
 export type InventoryTransactionWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  transactionCode?: string
   AND?: Prisma.InventoryTransactionWhereInput | Prisma.InventoryTransactionWhereInput[]
   OR?: Prisma.InventoryTransactionWhereInput[]
   NOT?: Prisma.InventoryTransactionWhereInput | Prisma.InventoryTransactionWhereInput[]
   itemId?: Prisma.IntFilter<"InventoryTransaction"> | number
   userId?: Prisma.IntFilter<"InventoryTransaction"> | number
+  gudangId?: Prisma.IntNullableFilter<"InventoryTransaction"> | number | null
   type?: Prisma.EnumTransactionTypeFilter<"InventoryTransaction"> | $Enums.TransactionType
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
   note?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
+  description?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   date?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
   item?: Prisma.XOR<Prisma.ItemScalarRelationFilter, Prisma.ItemWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+  gudang?: Prisma.XOR<Prisma.GudangNullableScalarRelationFilter, Prisma.GudangWhereInput> | null
+}, "id" | "transactionCode">
 
 export type InventoryTransactionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   itemId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  gudangId?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
+  transactionCode?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   date?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -320,9 +360,12 @@ export type InventoryTransactionScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"InventoryTransaction"> | number
   itemId?: Prisma.IntWithAggregatesFilter<"InventoryTransaction"> | number
   userId?: Prisma.IntWithAggregatesFilter<"InventoryTransaction"> | number
+  gudangId?: Prisma.IntNullableWithAggregatesFilter<"InventoryTransaction"> | number | null
   type?: Prisma.EnumTransactionTypeWithAggregatesFilter<"InventoryTransaction"> | $Enums.TransactionType
+  transactionCode?: Prisma.StringWithAggregatesFilter<"InventoryTransaction"> | string
   quantity?: Prisma.IntWithAggregatesFilter<"InventoryTransaction"> | number
   note?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransaction"> | string | null
+  description?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransaction"> | string | null
   date?: Prisma.DateTimeWithAggregatesFilter<"InventoryTransaction"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"InventoryTransaction"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"InventoryTransaction"> | Date | string
@@ -330,22 +373,28 @@ export type InventoryTransactionScalarWhereWithAggregatesInput = {
 
 export type InventoryTransactionCreateInput = {
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   item: Prisma.ItemCreateNestedOneWithoutTransactionsInput
   user: Prisma.UserCreateNestedOneWithoutTransactionsInput
+  gudang?: Prisma.GudangCreateNestedOneWithoutTransactionsInput
 }
 
 export type InventoryTransactionUncheckedCreateInput = {
   id?: number
   itemId: number
   userId: number
+  gudangId?: number | null
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -353,22 +402,28 @@ export type InventoryTransactionUncheckedCreateInput = {
 
 export type InventoryTransactionUpdateInput = {
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   item?: Prisma.ItemUpdateOneRequiredWithoutTransactionsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutTransactionsNestedInput
+  gudang?: Prisma.GudangUpdateOneWithoutTransactionsNestedInput
 }
 
 export type InventoryTransactionUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   itemId?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  gudangId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -378,9 +433,12 @@ export type InventoryTransactionCreateManyInput = {
   id?: number
   itemId: number
   userId: number
+  gudangId?: number | null
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -388,8 +446,10 @@ export type InventoryTransactionCreateManyInput = {
 
 export type InventoryTransactionUpdateManyMutationInput = {
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -399,9 +459,12 @@ export type InventoryTransactionUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   itemId?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  gudangId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -427,9 +490,12 @@ export type InventoryTransactionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   itemId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  gudangId?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  transactionCode?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   date?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -439,6 +505,7 @@ export type InventoryTransactionAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   itemId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  gudangId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
 }
 
@@ -446,9 +513,12 @@ export type InventoryTransactionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   itemId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  gudangId?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  transactionCode?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   date?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -458,9 +528,12 @@ export type InventoryTransactionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   itemId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  gudangId?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  transactionCode?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   date?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -470,6 +543,7 @@ export type InventoryTransactionSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   itemId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  gudangId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
 }
 
@@ -557,30 +631,82 @@ export type InventoryTransactionUncheckedUpdateManyWithoutItemNestedInput = {
   deleteMany?: Prisma.InventoryTransactionScalarWhereInput | Prisma.InventoryTransactionScalarWhereInput[]
 }
 
+export type InventoryTransactionCreateNestedManyWithoutGudangInput = {
+  create?: Prisma.XOR<Prisma.InventoryTransactionCreateWithoutGudangInput, Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput> | Prisma.InventoryTransactionCreateWithoutGudangInput[] | Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput[]
+  connectOrCreate?: Prisma.InventoryTransactionCreateOrConnectWithoutGudangInput | Prisma.InventoryTransactionCreateOrConnectWithoutGudangInput[]
+  createMany?: Prisma.InventoryTransactionCreateManyGudangInputEnvelope
+  connect?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+}
+
+export type InventoryTransactionUncheckedCreateNestedManyWithoutGudangInput = {
+  create?: Prisma.XOR<Prisma.InventoryTransactionCreateWithoutGudangInput, Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput> | Prisma.InventoryTransactionCreateWithoutGudangInput[] | Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput[]
+  connectOrCreate?: Prisma.InventoryTransactionCreateOrConnectWithoutGudangInput | Prisma.InventoryTransactionCreateOrConnectWithoutGudangInput[]
+  createMany?: Prisma.InventoryTransactionCreateManyGudangInputEnvelope
+  connect?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+}
+
+export type InventoryTransactionUpdateManyWithoutGudangNestedInput = {
+  create?: Prisma.XOR<Prisma.InventoryTransactionCreateWithoutGudangInput, Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput> | Prisma.InventoryTransactionCreateWithoutGudangInput[] | Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput[]
+  connectOrCreate?: Prisma.InventoryTransactionCreateOrConnectWithoutGudangInput | Prisma.InventoryTransactionCreateOrConnectWithoutGudangInput[]
+  upsert?: Prisma.InventoryTransactionUpsertWithWhereUniqueWithoutGudangInput | Prisma.InventoryTransactionUpsertWithWhereUniqueWithoutGudangInput[]
+  createMany?: Prisma.InventoryTransactionCreateManyGudangInputEnvelope
+  set?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+  disconnect?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+  delete?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+  connect?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+  update?: Prisma.InventoryTransactionUpdateWithWhereUniqueWithoutGudangInput | Prisma.InventoryTransactionUpdateWithWhereUniqueWithoutGudangInput[]
+  updateMany?: Prisma.InventoryTransactionUpdateManyWithWhereWithoutGudangInput | Prisma.InventoryTransactionUpdateManyWithWhereWithoutGudangInput[]
+  deleteMany?: Prisma.InventoryTransactionScalarWhereInput | Prisma.InventoryTransactionScalarWhereInput[]
+}
+
+export type InventoryTransactionUncheckedUpdateManyWithoutGudangNestedInput = {
+  create?: Prisma.XOR<Prisma.InventoryTransactionCreateWithoutGudangInput, Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput> | Prisma.InventoryTransactionCreateWithoutGudangInput[] | Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput[]
+  connectOrCreate?: Prisma.InventoryTransactionCreateOrConnectWithoutGudangInput | Prisma.InventoryTransactionCreateOrConnectWithoutGudangInput[]
+  upsert?: Prisma.InventoryTransactionUpsertWithWhereUniqueWithoutGudangInput | Prisma.InventoryTransactionUpsertWithWhereUniqueWithoutGudangInput[]
+  createMany?: Prisma.InventoryTransactionCreateManyGudangInputEnvelope
+  set?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+  disconnect?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+  delete?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+  connect?: Prisma.InventoryTransactionWhereUniqueInput | Prisma.InventoryTransactionWhereUniqueInput[]
+  update?: Prisma.InventoryTransactionUpdateWithWhereUniqueWithoutGudangInput | Prisma.InventoryTransactionUpdateWithWhereUniqueWithoutGudangInput[]
+  updateMany?: Prisma.InventoryTransactionUpdateManyWithWhereWithoutGudangInput | Prisma.InventoryTransactionUpdateManyWithWhereWithoutGudangInput[]
+  deleteMany?: Prisma.InventoryTransactionScalarWhereInput | Prisma.InventoryTransactionScalarWhereInput[]
+}
+
 export type EnumTransactionTypeFieldUpdateOperationsInput = {
   set?: $Enums.TransactionType
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type InventoryTransactionCreateWithoutUserInput = {
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   item: Prisma.ItemCreateNestedOneWithoutTransactionsInput
+  gudang?: Prisma.GudangCreateNestedOneWithoutTransactionsInput
 }
 
 export type InventoryTransactionUncheckedCreateWithoutUserInput = {
   id?: number
   itemId: number
+  gudangId?: number | null
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -619,9 +745,12 @@ export type InventoryTransactionScalarWhereInput = {
   id?: Prisma.IntFilter<"InventoryTransaction"> | number
   itemId?: Prisma.IntFilter<"InventoryTransaction"> | number
   userId?: Prisma.IntFilter<"InventoryTransaction"> | number
+  gudangId?: Prisma.IntNullableFilter<"InventoryTransaction"> | number | null
   type?: Prisma.EnumTransactionTypeFilter<"InventoryTransaction"> | $Enums.TransactionType
+  transactionCode?: Prisma.StringFilter<"InventoryTransaction"> | string
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
   note?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
+  description?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   date?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryTransaction"> | Date | string
@@ -629,20 +758,26 @@ export type InventoryTransactionScalarWhereInput = {
 
 export type InventoryTransactionCreateWithoutItemInput = {
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTransactionsInput
+  gudang?: Prisma.GudangCreateNestedOneWithoutTransactionsInput
 }
 
 export type InventoryTransactionUncheckedCreateWithoutItemInput = {
   id?: number
   userId: number
+  gudangId?: number | null
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -674,12 +809,68 @@ export type InventoryTransactionUpdateManyWithWhereWithoutItemInput = {
   data: Prisma.XOR<Prisma.InventoryTransactionUpdateManyMutationInput, Prisma.InventoryTransactionUncheckedUpdateManyWithoutItemInput>
 }
 
+export type InventoryTransactionCreateWithoutGudangInput = {
+  type: $Enums.TransactionType
+  transactionCode: string
+  quantity: number
+  note?: string | null
+  description?: string | null
+  date?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  item: Prisma.ItemCreateNestedOneWithoutTransactionsInput
+  user: Prisma.UserCreateNestedOneWithoutTransactionsInput
+}
+
+export type InventoryTransactionUncheckedCreateWithoutGudangInput = {
+  id?: number
+  itemId: number
+  userId: number
+  type: $Enums.TransactionType
+  transactionCode: string
+  quantity: number
+  note?: string | null
+  description?: string | null
+  date?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type InventoryTransactionCreateOrConnectWithoutGudangInput = {
+  where: Prisma.InventoryTransactionWhereUniqueInput
+  create: Prisma.XOR<Prisma.InventoryTransactionCreateWithoutGudangInput, Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput>
+}
+
+export type InventoryTransactionCreateManyGudangInputEnvelope = {
+  data: Prisma.InventoryTransactionCreateManyGudangInput | Prisma.InventoryTransactionCreateManyGudangInput[]
+  skipDuplicates?: boolean
+}
+
+export type InventoryTransactionUpsertWithWhereUniqueWithoutGudangInput = {
+  where: Prisma.InventoryTransactionWhereUniqueInput
+  update: Prisma.XOR<Prisma.InventoryTransactionUpdateWithoutGudangInput, Prisma.InventoryTransactionUncheckedUpdateWithoutGudangInput>
+  create: Prisma.XOR<Prisma.InventoryTransactionCreateWithoutGudangInput, Prisma.InventoryTransactionUncheckedCreateWithoutGudangInput>
+}
+
+export type InventoryTransactionUpdateWithWhereUniqueWithoutGudangInput = {
+  where: Prisma.InventoryTransactionWhereUniqueInput
+  data: Prisma.XOR<Prisma.InventoryTransactionUpdateWithoutGudangInput, Prisma.InventoryTransactionUncheckedUpdateWithoutGudangInput>
+}
+
+export type InventoryTransactionUpdateManyWithWhereWithoutGudangInput = {
+  where: Prisma.InventoryTransactionScalarWhereInput
+  data: Prisma.XOR<Prisma.InventoryTransactionUpdateManyMutationInput, Prisma.InventoryTransactionUncheckedUpdateManyWithoutGudangInput>
+}
+
 export type InventoryTransactionCreateManyUserInput = {
   id?: number
   itemId: number
+  gudangId?: number | null
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -687,20 +878,26 @@ export type InventoryTransactionCreateManyUserInput = {
 
 export type InventoryTransactionUpdateWithoutUserInput = {
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   item?: Prisma.ItemUpdateOneRequiredWithoutTransactionsNestedInput
+  gudang?: Prisma.GudangUpdateOneWithoutTransactionsNestedInput
 }
 
 export type InventoryTransactionUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   itemId?: Prisma.IntFieldUpdateOperationsInput | number
+  gudangId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -709,9 +906,12 @@ export type InventoryTransactionUncheckedUpdateWithoutUserInput = {
 export type InventoryTransactionUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   itemId?: Prisma.IntFieldUpdateOperationsInput | number
+  gudangId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -720,9 +920,12 @@ export type InventoryTransactionUncheckedUpdateManyWithoutUserInput = {
 export type InventoryTransactionCreateManyItemInput = {
   id?: number
   userId: number
+  gudangId?: number | null
   type: $Enums.TransactionType
+  transactionCode: string
   quantity: number
   note?: string | null
+  description?: string | null
   date?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -730,20 +933,26 @@ export type InventoryTransactionCreateManyItemInput = {
 
 export type InventoryTransactionUpdateWithoutItemInput = {
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTransactionsNestedInput
+  gudang?: Prisma.GudangUpdateOneWithoutTransactionsNestedInput
 }
 
 export type InventoryTransactionUncheckedUpdateWithoutItemInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  gudangId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -752,9 +961,67 @@ export type InventoryTransactionUncheckedUpdateWithoutItemInput = {
 export type InventoryTransactionUncheckedUpdateManyWithoutItemInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  gudangId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type InventoryTransactionCreateManyGudangInput = {
+  id?: number
+  itemId: number
+  userId: number
+  type: $Enums.TransactionType
+  transactionCode: string
+  quantity: number
+  note?: string | null
+  description?: string | null
+  date?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type InventoryTransactionUpdateWithoutGudangInput = {
+  type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  item?: Prisma.ItemUpdateOneRequiredWithoutTransactionsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutTransactionsNestedInput
+}
+
+export type InventoryTransactionUncheckedUpdateWithoutGudangInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  itemId?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type InventoryTransactionUncheckedUpdateManyWithoutGudangInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  itemId?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+  transactionCode?: Prisma.StringFieldUpdateOperationsInput | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -766,14 +1033,18 @@ export type InventoryTransactionSelect<ExtArgs extends runtime.Types.Extensions.
   id?: boolean
   itemId?: boolean
   userId?: boolean
+  gudangId?: boolean
   type?: boolean
+  transactionCode?: boolean
   quantity?: boolean
   note?: boolean
+  description?: boolean
   date?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   item?: boolean | Prisma.ItemDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  gudang?: boolean | Prisma.InventoryTransaction$gudangArgs<ExtArgs>
 }, ExtArgs["result"]["inventoryTransaction"]>
 
 
@@ -782,18 +1053,22 @@ export type InventoryTransactionSelectScalar = {
   id?: boolean
   itemId?: boolean
   userId?: boolean
+  gudangId?: boolean
   type?: boolean
+  transactionCode?: boolean
   quantity?: boolean
   note?: boolean
+  description?: boolean
   date?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type InventoryTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "itemId" | "userId" | "type" | "quantity" | "note" | "date" | "createdAt" | "updatedAt", ExtArgs["result"]["inventoryTransaction"]>
+export type InventoryTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "itemId" | "userId" | "gudangId" | "type" | "transactionCode" | "quantity" | "note" | "description" | "date" | "createdAt" | "updatedAt", ExtArgs["result"]["inventoryTransaction"]>
 export type InventoryTransactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   item?: boolean | Prisma.ItemDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  gudang?: boolean | Prisma.InventoryTransaction$gudangArgs<ExtArgs>
 }
 
 export type $InventoryTransactionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -801,14 +1076,18 @@ export type $InventoryTransactionPayload<ExtArgs extends runtime.Types.Extension
   objects: {
     item: Prisma.$ItemPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
+    gudang: Prisma.$GudangPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     itemId: number
     userId: number
+    gudangId: number | null
     type: $Enums.TransactionType
+    transactionCode: string
     quantity: number
     note: string | null
+    description: string | null
     date: Date
     createdAt: Date
     updatedAt: Date
@@ -1154,6 +1433,7 @@ export interface Prisma__InventoryTransactionClient<T, Null = never, ExtArgs ext
   readonly [Symbol.toStringTag]: "PrismaPromise"
   item<T extends Prisma.ItemDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ItemDefaultArgs<ExtArgs>>): Prisma.Prisma__ItemClient<runtime.Types.Result.GetResult<Prisma.$ItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  gudang<T extends Prisma.InventoryTransaction$gudangArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InventoryTransaction$gudangArgs<ExtArgs>>): Prisma.Prisma__GudangClient<runtime.Types.Result.GetResult<Prisma.$GudangPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1186,9 +1466,12 @@ export interface InventoryTransactionFieldRefs {
   readonly id: Prisma.FieldRef<"InventoryTransaction", 'Int'>
   readonly itemId: Prisma.FieldRef<"InventoryTransaction", 'Int'>
   readonly userId: Prisma.FieldRef<"InventoryTransaction", 'Int'>
+  readonly gudangId: Prisma.FieldRef<"InventoryTransaction", 'Int'>
   readonly type: Prisma.FieldRef<"InventoryTransaction", 'TransactionType'>
+  readonly transactionCode: Prisma.FieldRef<"InventoryTransaction", 'String'>
   readonly quantity: Prisma.FieldRef<"InventoryTransaction", 'Int'>
   readonly note: Prisma.FieldRef<"InventoryTransaction", 'String'>
+  readonly description: Prisma.FieldRef<"InventoryTransaction", 'String'>
   readonly date: Prisma.FieldRef<"InventoryTransaction", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"InventoryTransaction", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"InventoryTransaction", 'DateTime'>
@@ -1532,6 +1815,25 @@ export type InventoryTransactionDeleteManyArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many InventoryTransactions to delete.
    */
   limit?: number
+}
+
+/**
+ * InventoryTransaction.gudang
+ */
+export type InventoryTransaction$gudangArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Gudang
+   */
+  select?: Prisma.GudangSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Gudang
+   */
+  omit?: Prisma.GudangOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GudangInclude<ExtArgs> | null
+  where?: Prisma.GudangWhereInput
 }
 
 /**

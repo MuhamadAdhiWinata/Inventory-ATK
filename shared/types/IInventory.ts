@@ -1,17 +1,20 @@
-// types/IInventory.ts
 export type TransactionType = 'IN' | 'OUT'
 
 export interface InventoryTransaction {
   id: number
-  transactionId: string // IN-001, OUT-001
+  transactionCode: string
   type: TransactionType
   date: string
+  itemId: number
   itemName: string
   quantity: number
-  sourceOrDestination: string // Supplier/Warehouse untuk IN, Customer/Production untuk OUT
-  notes: string
-  itemId?: number // Link ke master data
-  unit?: string
+  unit: string
+  gudangId: number | null
+  gudangName: string | null
+  note: string | null
+  description: string | null
+  userId: number
+  userName: string
 }
 
 export interface InventoryResponse {
@@ -19,4 +22,12 @@ export interface InventoryResponse {
   message: string
   success: boolean
   total: number
+  page: number
+  limit: number
+}
+
+export interface GudangItem {
+  id: number
+  name: string
+  location: string | null
 }

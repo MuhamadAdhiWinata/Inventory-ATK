@@ -98,19 +98,35 @@ model Item {
 // INVENTORY TRANSACTION
 // ─────────────────────────────────────────
 
-model InventoryTransaction {
-  id        Int             @id @default(autoincrement())
-  itemId    Int             @map("item_id")
-  userId    Int             @map("user_id")
-  type      TransactionType
-  quantity  Int
-  note      String?
-  date      DateTime        @default(now())
-  createdAt DateTime        @default(now()) @map("created_at")
-  updatedAt DateTime        @updatedAt @map("updated_at")
+model Gudang {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  location  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  item Item @relation(fields: [itemId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  transactions InventoryTransaction[]
+
+  @@map("gudang")
+}
+
+model InventoryTransaction {
+  id              Int             @id @default(autoincrement())
+  itemId          Int             @map("item_id")
+  userId          Int             @map("user_id")
+  gudangId        Int?            @map("gudang_id")
+  type            TransactionType
+  transactionCode String          @unique @map("transaction_code")
+  quantity        Int
+  note            String?
+  description     String?
+  date            DateTime        @default(now())
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  item   Item    @relation(fields: [itemId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+  gudang Gudang? @relation(fields: [gudangId], references: [id])
 
   @@map("inventory_transactions")
 }
