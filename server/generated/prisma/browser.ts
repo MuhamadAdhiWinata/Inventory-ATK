@@ -43,12 +43,12 @@ export type Unit = Prisma.UnitModel
  */
 export type Item = Prisma.ItemModel
 /**
- * Model Gudang
- * 
- */
-export type Gudang = Prisma.GudangModel
-/**
  * Model InventoryTransaction
  * 
  */
 export type InventoryTransaction = Prisma.InventoryTransactionModel
+/**
+ * Model Gudang
+ * 
+ */
+export type Gudang = Prisma.GudangModel

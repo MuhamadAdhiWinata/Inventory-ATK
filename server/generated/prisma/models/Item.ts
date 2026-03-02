@@ -30,7 +30,6 @@ export type ItemAvgAggregateOutputType = {
   id: number | null
   subCategoryId: number | null
   unitId: number | null
-  currentStock: number | null
   minStock: number | null
 }
 
@@ -38,7 +37,6 @@ export type ItemSumAggregateOutputType = {
   id: number | null
   subCategoryId: number | null
   unitId: number | null
-  currentStock: number | null
   minStock: number | null
 }
 
@@ -48,7 +46,6 @@ export type ItemMinAggregateOutputType = {
   name: string | null
   subCategoryId: number | null
   unitId: number | null
-  currentStock: number | null
   minStock: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -60,7 +57,6 @@ export type ItemMaxAggregateOutputType = {
   name: string | null
   subCategoryId: number | null
   unitId: number | null
-  currentStock: number | null
   minStock: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -72,7 +68,6 @@ export type ItemCountAggregateOutputType = {
   name: number
   subCategoryId: number
   unitId: number
-  currentStock: number
   minStock: number
   createdAt: number
   updatedAt: number
@@ -84,7 +79,6 @@ export type ItemAvgAggregateInputType = {
   id?: true
   subCategoryId?: true
   unitId?: true
-  currentStock?: true
   minStock?: true
 }
 
@@ -92,7 +86,6 @@ export type ItemSumAggregateInputType = {
   id?: true
   subCategoryId?: true
   unitId?: true
-  currentStock?: true
   minStock?: true
 }
 
@@ -102,7 +95,6 @@ export type ItemMinAggregateInputType = {
   name?: true
   subCategoryId?: true
   unitId?: true
-  currentStock?: true
   minStock?: true
   createdAt?: true
   updatedAt?: true
@@ -114,7 +106,6 @@ export type ItemMaxAggregateInputType = {
   name?: true
   subCategoryId?: true
   unitId?: true
-  currentStock?: true
   minStock?: true
   createdAt?: true
   updatedAt?: true
@@ -126,7 +117,6 @@ export type ItemCountAggregateInputType = {
   name?: true
   subCategoryId?: true
   unitId?: true
-  currentStock?: true
   minStock?: true
   createdAt?: true
   updatedAt?: true
@@ -225,7 +215,6 @@ export type ItemGroupByOutputType = {
   name: string
   subCategoryId: number
   unitId: number
-  currentStock: number
   minStock: number
   createdAt: Date
   updatedAt: Date
@@ -260,7 +249,6 @@ export type ItemWhereInput = {
   name?: Prisma.StringFilter<"Item"> | string
   subCategoryId?: Prisma.IntFilter<"Item"> | number
   unitId?: Prisma.IntFilter<"Item"> | number
-  currentStock?: Prisma.IntFilter<"Item"> | number
   minStock?: Prisma.IntFilter<"Item"> | number
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
@@ -275,7 +263,6 @@ export type ItemOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   unitId?: Prisma.SortOrder
-  currentStock?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -294,7 +281,6 @@ export type ItemWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Item"> | string
   subCategoryId?: Prisma.IntFilter<"Item"> | number
   unitId?: Prisma.IntFilter<"Item"> | number
-  currentStock?: Prisma.IntFilter<"Item"> | number
   minStock?: Prisma.IntFilter<"Item"> | number
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
@@ -309,7 +295,6 @@ export type ItemOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   unitId?: Prisma.SortOrder
-  currentStock?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -329,7 +314,6 @@ export type ItemScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Item"> | string
   subCategoryId?: Prisma.IntWithAggregatesFilter<"Item"> | number
   unitId?: Prisma.IntWithAggregatesFilter<"Item"> | number
-  currentStock?: Prisma.IntWithAggregatesFilter<"Item"> | number
   minStock?: Prisma.IntWithAggregatesFilter<"Item"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Item"> | Date | string
@@ -338,7 +322,6 @@ export type ItemScalarWhereWithAggregatesInput = {
 export type ItemCreateInput = {
   code: string
   name: string
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -353,7 +336,6 @@ export type ItemUncheckedCreateInput = {
   name: string
   subCategoryId: number
   unitId: number
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -363,7 +345,6 @@ export type ItemUncheckedCreateInput = {
 export type ItemUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -378,7 +359,6 @@ export type ItemUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subCategoryId?: Prisma.IntFieldUpdateOperationsInput | number
   unitId?: Prisma.IntFieldUpdateOperationsInput | number
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -391,7 +371,6 @@ export type ItemCreateManyInput = {
   name: string
   subCategoryId: number
   unitId: number
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -400,7 +379,6 @@ export type ItemCreateManyInput = {
 export type ItemUpdateManyMutationInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -412,7 +390,6 @@ export type ItemUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subCategoryId?: Prisma.IntFieldUpdateOperationsInput | number
   unitId?: Prisma.IntFieldUpdateOperationsInput | number
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -440,7 +417,6 @@ export type ItemCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   unitId?: Prisma.SortOrder
-  currentStock?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -450,7 +426,6 @@ export type ItemAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   unitId?: Prisma.SortOrder
-  currentStock?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
 }
 
@@ -460,7 +435,6 @@ export type ItemMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   unitId?: Prisma.SortOrder
-  currentStock?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -472,7 +446,6 @@ export type ItemMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   unitId?: Prisma.SortOrder
-  currentStock?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -482,7 +455,6 @@ export type ItemSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   subCategoryId?: Prisma.SortOrder
   unitId?: Prisma.SortOrder
-  currentStock?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
 }
 
@@ -592,7 +564,6 @@ export type ItemUpdateOneRequiredWithoutTransactionsNestedInput = {
 export type ItemCreateWithoutSubCategoryInput = {
   code: string
   name: string
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -605,7 +576,6 @@ export type ItemUncheckedCreateWithoutSubCategoryInput = {
   code: string
   name: string
   unitId: number
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -647,7 +617,6 @@ export type ItemScalarWhereInput = {
   name?: Prisma.StringFilter<"Item"> | string
   subCategoryId?: Prisma.IntFilter<"Item"> | number
   unitId?: Prisma.IntFilter<"Item"> | number
-  currentStock?: Prisma.IntFilter<"Item"> | number
   minStock?: Prisma.IntFilter<"Item"> | number
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
@@ -656,7 +625,6 @@ export type ItemScalarWhereInput = {
 export type ItemCreateWithoutUnitInput = {
   code: string
   name: string
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -669,7 +637,6 @@ export type ItemUncheckedCreateWithoutUnitInput = {
   code: string
   name: string
   subCategoryId: number
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -705,7 +672,6 @@ export type ItemUpdateManyWithWhereWithoutUnitInput = {
 export type ItemCreateWithoutTransactionsInput = {
   code: string
   name: string
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -719,7 +685,6 @@ export type ItemUncheckedCreateWithoutTransactionsInput = {
   name: string
   subCategoryId: number
   unitId: number
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -744,7 +709,6 @@ export type ItemUpdateToOneWithWhereWithoutTransactionsInput = {
 export type ItemUpdateWithoutTransactionsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -758,7 +722,6 @@ export type ItemUncheckedUpdateWithoutTransactionsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subCategoryId?: Prisma.IntFieldUpdateOperationsInput | number
   unitId?: Prisma.IntFieldUpdateOperationsInput | number
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -769,7 +732,6 @@ export type ItemCreateManySubCategoryInput = {
   code: string
   name: string
   unitId: number
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -778,7 +740,6 @@ export type ItemCreateManySubCategoryInput = {
 export type ItemUpdateWithoutSubCategoryInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -791,7 +752,6 @@ export type ItemUncheckedUpdateWithoutSubCategoryInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   unitId?: Prisma.IntFieldUpdateOperationsInput | number
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -803,7 +763,6 @@ export type ItemUncheckedUpdateManyWithoutSubCategoryInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   unitId?: Prisma.IntFieldUpdateOperationsInput | number
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -814,7 +773,6 @@ export type ItemCreateManyUnitInput = {
   code: string
   name: string
   subCategoryId: number
-  currentStock?: number
   minStock?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -823,7 +781,6 @@ export type ItemCreateManyUnitInput = {
 export type ItemUpdateWithoutUnitInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -836,7 +793,6 @@ export type ItemUncheckedUpdateWithoutUnitInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subCategoryId?: Prisma.IntFieldUpdateOperationsInput | number
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -848,7 +804,6 @@ export type ItemUncheckedUpdateManyWithoutUnitInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   subCategoryId?: Prisma.IntFieldUpdateOperationsInput | number
-  currentStock?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -891,7 +846,6 @@ export type ItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   name?: boolean
   subCategoryId?: boolean
   unitId?: boolean
-  currentStock?: boolean
   minStock?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -909,13 +863,12 @@ export type ItemSelectScalar = {
   name?: boolean
   subCategoryId?: boolean
   unitId?: boolean
-  currentStock?: boolean
   minStock?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "subCategoryId" | "unitId" | "currentStock" | "minStock" | "createdAt" | "updatedAt", ExtArgs["result"]["item"]>
+export type ItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "subCategoryId" | "unitId" | "minStock" | "createdAt" | "updatedAt", ExtArgs["result"]["item"]>
 export type ItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   subCategory?: boolean | Prisma.SubCategoryDefaultArgs<ExtArgs>
   unit?: boolean | Prisma.UnitDefaultArgs<ExtArgs>
@@ -936,7 +889,6 @@ export type $ItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     subCategoryId: number
     unitId: number
-    currentStock: number
     minStock: number
     createdAt: Date
     updatedAt: Date
@@ -1317,7 +1269,6 @@ export interface ItemFieldRefs {
   readonly name: Prisma.FieldRef<"Item", 'String'>
   readonly subCategoryId: Prisma.FieldRef<"Item", 'Int'>
   readonly unitId: Prisma.FieldRef<"Item", 'Int'>
-  readonly currentStock: Prisma.FieldRef<"Item", 'Int'>
   readonly minStock: Prisma.FieldRef<"Item", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Item", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Item", 'DateTime'>

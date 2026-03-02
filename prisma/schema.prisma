@@ -82,7 +82,6 @@ model Item {
   name          String
   subCategoryId Int      @map("sub_category_id")
   unitId        Int      @map("unit_id")
-  currentStock  Int      @default(0) @map("current_stock")
   minStock      Int      @default(0) @map("min_stock")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
@@ -98,6 +97,29 @@ model Item {
 // INVENTORY TRANSACTION
 // ─────────────────────────────────────────
 
+model InventoryTransaction {
+  id              Int             @id @default(autoincrement())
+  itemId          Int             @map("item_id")
+  userId          Int             @map("user_id")
+  type            TransactionType
+  transactionCode String          @unique @map("transaction_code")
+  quantity        Int
+  note            String?
+  description     String?
+  gudangId        Int?            @map("gudang_id")
+  gudangTujuanId  Int?            @map("gudang_tujuan_id")
+  date            DateTime        @default(now())
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  item         Item   @relation(fields: [itemId], references: [id])
+  user         User   @relation(fields: [userId], references: [id])
+  gudang       Gudang? @relation("GudangAsal", fields: [gudangId], references: [id])
+  gudangTujuan Gudang? @relation("GudangTujuan", fields: [gudangTujuanId], references: [id])
+
+  @@map("inventory_transactions")
+}
+
 model Gudang {
   id        Int      @id @default(autoincrement())
   name      String   @unique
@@ -105,33 +127,15 @@ model Gudang {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  transactions InventoryTransaction[]
+  transaksiAsal   InventoryTransaction[] @relation("GudangAsal")
+  transaksiTujuan InventoryTransaction[] @relation("GudangTujuan")
 
   @@map("gudang")
-}
-
-model InventoryTransaction {
-  id              Int             @id @default(autoincrement())
-  itemId          Int             @map("item_id")
-  userId          Int             @map("user_id")
-  gudangId        Int?            @map("gudang_id")
-  type            TransactionType
-  transactionCode String          @unique @map("transaction_code")
-  quantity        Int
-  note            String?
-  description     String?
-  date            DateTime        @default(now())
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
-
-  item   Item    @relation(fields: [itemId], references: [id])
-  user   User    @relation(fields: [userId], references: [id])
-  gudang Gudang? @relation(fields: [gudangId], references: [id])
-
-  @@map("inventory_transactions")
 }
 
 enum TransactionType {
   IN
   OUT
+  TRANSFER
+  ADJUSTMENT
 }

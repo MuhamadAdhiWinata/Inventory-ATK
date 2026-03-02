@@ -124,10 +124,17 @@ import {
   LayoutDashboard,
   Database,
   Settings,
-  Warehouse,
   ArrowBigDown,
   ArrowBigUp,
   House,
+  BoxIcon,
+  RefreshCcwIcon,
+  BoxesIcon,
+  Warehouse,
+  WarehouseIcon,
+  Layers2Icon,
+  LayoutGridIcon,
+  RulerIcon,
 } from 'lucide-vue-next'
 import {
   Collapsible,
@@ -171,18 +178,30 @@ const navMain = computed<NavItem[]>(() => [
   },
   {
     title: 'Master Data',
-    url: '/master-data',
+    url: '/#',
     icon: Database,
+    items: [
+      { title: 'Barang', url: '/master-data', icon: BoxIcon },
+      { title: 'Gudang', url: '/gudang', icon: WarehouseIcon },
+      { title: 'Kategori', url: '/kategori', icon: Layers2Icon },
+      { title: 'Sub Kategori', url: '/sub-kategori', icon: LayoutGridIcon },
+      { title: 'Satuan', url: '/satuan', icon: RulerIcon },
+    ],
   },
   {
-    title: 'Inventory',
+    title: 'Transaksi',
     url: '#',
-    icon: Warehouse,
+    icon: RefreshCcwIcon,
     items: [
       { title: 'Inventory In', url: '/inventory-in', icon: ArrowBigDown },
-      { title: 'Transfer Gudang', url: '/transfer-gudang', icon: House },
+      { title: 'Transfer Gudang', url: '/transfer', icon: House },
       { title: 'Inventory Out', url: '/inventory-out', icon: ArrowBigUp },
     ],
+  },
+  {
+    title: 'Stok',
+    url: '/stock',
+    icon: BoxesIcon,
   },
   {
     title: 'Pengaturan',

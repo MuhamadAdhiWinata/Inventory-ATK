@@ -1,23 +1,19 @@
-// types/IMasterData.ts
-export type ItemCategory = 'ATK' | 'Bahan Praktik' | 'Perlengkapan Kelas' | 'Kebersihan'
-export type StockStatus = 'Aman' | 'Perlu Restock'
-
 export interface MasterItem {
   id: number
   kodeBarang: string
   namaBarang: string
-  kategori: ItemCategory
+  kategori: string
   subKategori: string
   satuan: string
-  currentStock: number
+  totalStock: number
   stokMin: number
-  status?: StockStatus // Calculated field
+  status: 'Aman' | 'Perlu Restock'
 }
 
 export interface MasterDataResponse {
   data: MasterItem[]
-  message: string
   success: boolean
+  message: string
   total: number
   page: number
   limit: number

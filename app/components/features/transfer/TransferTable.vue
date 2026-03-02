@@ -13,17 +13,17 @@
       </div>
       <button
         @click="emit('add')"
-        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-white hover:bg-destructive/90 h-10 px-4 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-orange-500 text-white hover:bg-orange-600 h-10 px-4 py-2"
       >
         <PlusIcon class="mr-2 h-4 w-4" />
-        Tambah Transaksi
+        Transfer Barang
       </button>
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="text-center py-12">
-      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-destructive"></div>
-      <p class="mt-4 text-sm text-muted-foreground">Memuat transaksi...</p>
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+      <p class="mt-4 text-sm text-muted-foreground">Memuat data transfer...</p>
     </div>
 
     <!-- Error -->
@@ -33,15 +33,11 @@
         <h3 class="font-semibold">Terjadi Kesalahan</h3>
       </div>
       <p class="text-sm text-muted-foreground mb-4">{{ error }}</p>
-      <button
-        @click="emit('retry')"
-        class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4"
-      >
+      <button @click="emit('retry')" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4">
         Coba Lagi
       </button>
     </div>
 
-    <!-- Table -->
     <div v-else>
       <!-- Desktop -->
       <div class="hidden md:block overflow-x-auto border rounded-lg">
@@ -52,24 +48,34 @@
               <th class="h-11 px-4 text-left font-medium text-muted-foreground">Tanggal</th>
               <th class="h-11 px-4 text-left font-medium text-muted-foreground">Barang</th>
               <th class="h-11 px-4 text-left font-medium text-muted-foreground">Quantity</th>
-              <th class="h-11 px-4 text-left font-medium text-muted-foreground">Gudang Asal</th>
+              <th class="h-11 px-4 text-left font-medium text-muted-foreground">Dari Gudang</th>
+              <th class="h-11 px-4 text-left font-medium text-muted-foreground">Ke Gudang</th>
               <th class="h-11 px-4 text-left font-medium text-muted-foreground">Description</th>
-              <th class="h-11 px-4 text-left font-medium text-muted-foreground">Note</th>
               <th class="h-11 px-4 text-left font-medium text-muted-foreground">Aksi</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="transaksi in transactions" :key="transaksi.id" class="border-b transition-colors hover:bg-muted/50">
-              <td class="p-4 font-medium text-destructive">{{ transaksi.transactionCode }}</td>
+              <td class="p-4 font-medium text-orange-500">{{ transaksi.transactionCode }}</td>
               <td class="p-4">{{ formatTanggal(transaksi.date) }}</td>
               <td class="p-4">{{ transaksi.itemName }}</td>
               <td class="p-4">
                 <span class="font-semibold">{{ transaksi.quantity }}</span>
                 <span class="text-muted-foreground text-xs ml-1">{{ transaksi.unit }}</span>
               </td>
-              <td class="p-4">{{ transaksi.gudangName ?? '-' }}</td>
+              <td class="p-4">
+                <span class="inline-flex items-center gap-1">
+                  <WarehouseIcon class="h-3.5 w-3.5 text-muted-foreground" />
+                  {{ transaksi.gudangName ?? '-' }}
+                </span>
+              </td>
+              <td class="p-4">
+                <span class="inline-flex items-center gap-1">
+                  <ArrowRightIcon class="h-3.5 w-3.5 text-orange-500" />
+                  {{ transaksi.gudangTujuanName ?? '-' }}
+                </span>
+              </td>
               <td class="p-4 max-w-[160px] truncate text-muted-foreground">{{ transaksi.description ?? '-' }}</td>
-              <td class="p-4 max-w-[160px] truncate text-muted-foreground">{{ transaksi.note ?? '-' }}</td>
               <td class="p-4">
                 <div class="flex gap-2">
                   <button
@@ -93,14 +99,10 @@
 
       <!-- Mobile -->
       <div class="md:hidden space-y-3">
-        <div
-          v-for="transaksi in transactions"
-          :key="transaksi.id"
-          class="border rounded-lg p-4 bg-card"
-        >
+        <div v-for="transaksi in transactions" :key="transaksi.id" class="border rounded-lg p-4 bg-card">
           <div class="flex justify-between items-start mb-3">
             <div>
-              <p class="font-semibold text-destructive">{{ transaksi.transactionCode }}</p>
+              <p class="font-semibold text-orange-500">{{ transaksi.transactionCode }}</p>
               <p class="text-xs text-muted-foreground">{{ formatTanggal(transaksi.date) }}</p>
             </div>
             <div class="flex gap-2">
@@ -122,16 +124,16 @@
               <p class="font-medium">{{ transaksi.quantity }} {{ transaksi.unit }}</p>
             </div>
             <div>
-              <p class="text-muted-foreground">Gudang Asal</p>
+              <p class="text-muted-foreground">Dari Gudang</p>
               <p class="font-medium">{{ transaksi.gudangName ?? '-' }}</p>
             </div>
             <div>
-              <p class="text-muted-foreground">Description</p>
-              <p class="font-medium truncate">{{ transaksi.description ?? '-' }}</p>
+              <p class="text-muted-foreground">Ke Gudang</p>
+              <p class="font-medium">{{ transaksi.gudangTujuanName ?? '-' }}</p>
             </div>
             <div class="col-span-2">
-              <p class="text-muted-foreground">Note</p>
-              <p>{{ transaksi.note ?? '-' }}</p>
+              <p class="text-muted-foreground">Description</p>
+              <p>{{ transaksi.description ?? '-' }}</p>
             </div>
           </div>
         </div>
@@ -140,13 +142,12 @@
       <!-- Empty state -->
       <div v-if="!loading && transactions.length === 0" class="text-center py-12 border rounded-lg">
         <div class="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-          <PackageIcon class="h-6 w-6 text-muted-foreground" />
+          <ArrowRightLeftIcon class="h-6 w-6 text-muted-foreground" />
         </div>
-        <h3 class="font-semibold mb-1">Tidak Ada Transaksi</h3>
-        <p class="text-sm text-muted-foreground">Belum ada transaksi keluar yang tercatat.</p>
+        <h3 class="font-semibold mb-1">Belum Ada Transfer</h3>
+        <p class="text-sm text-muted-foreground">Belum ada transfer barang antar gudang.</p>
       </div>
 
-      <!-- Pagination -->
       <TablePagination
         v-if="totalItems > itemsPerPage"
         :current-page="currentPage"
@@ -159,7 +160,7 @@
 </template>
 
 <script setup lang="ts">
-import { SearchIcon, PlusIcon, AlertCircleIcon, PackageIcon, PencilIcon, Trash2Icon } from 'lucide-vue-next'
+import { SearchIcon, PlusIcon, AlertCircleIcon, PencilIcon, Trash2Icon, ArrowRightIcon, ArrowRightLeftIcon, WarehouseIcon } from 'lucide-vue-next'
 import type { InventoryTransaction } from '#shared/types/IInventory'
 import TablePagination from '@/components/DataTable/TablePagination.vue'
 
@@ -195,9 +196,7 @@ const onSearch = () => {
 
 const formatTanggal = (tanggal: string) => {
   return new Date(tanggal).toLocaleDateString('id-ID', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+    year: 'numeric', month: 'short', day: 'numeric'
   })
 }
 </script>

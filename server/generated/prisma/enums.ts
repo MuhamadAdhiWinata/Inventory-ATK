@@ -19,7 +19,9 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 export const TransactionType = {
   IN: 'IN',
-  OUT: 'OUT'
+  OUT: 'OUT',
+  TRANSFER: 'TRANSFER',
+  ADJUSTMENT: 'ADJUSTMENT'
 } as const
 
 export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]

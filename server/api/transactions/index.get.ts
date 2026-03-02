@@ -4,63 +4,68 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
 
   const type = query.type as string
-  const page = Number(query.page) || 1
+  const halaman = Number(query.page) || 1
   const limit = Number(query.limit) || 10
-  const search = query.search as string | undefined
-  const offset = (page - 1) * limit
+  const pencarian = query.search as string | undefined
+  const offset = (halaman - 1) * limit
 
-  const searchClause = search
+  const kondisiPencarian = pencarian
     ? `AND (i.name LIKE ? OR t.transaction_code LIKE ?)`
     : ''
+  const paramPencarian = pencarian ? [`%${pencarian}%`, `%${pencarian}%`] : []
 
-  const searchParams = search ? [`%${search}%`, `%${search}%`] : []
+  const kondisiType = type ? `WHERE t.type = ?` : ''
+  const paramType = type ? [type] : []
 
-  const [transactions, countResult] = await Promise.all([
+  const [transaksi, hasilHitung] = await Promise.all([
     prisma.$queryRawUnsafe<any[]>(`
       SELECT
         t.id,
-        t.transaction_code AS transactionCode,
+        t.transaction_code  AS transactionCode,
         t.type,
         t.date,
         t.quantity,
         t.note,
         t.description,
-        t.item_id AS itemId,
-        i.name AS itemName,
-        u.name AS unit,
-        t.gudang_id AS gudangId,
-        g.name AS gudangName,
-        t.user_id AS userId,
-        us.name AS userName
+        t.item_id           AS itemId,
+        i.name              AS itemName,
+        u.name              AS unit,
+        t.gudang_id         AS gudangId,
+        g.name              AS gudangName,
+        t.gudang_tujuan_id  AS gudangTujuanId,
+        gt.name             AS gudangTujuanName,
+        t.user_id           AS userId,
+        us.name             AS userName
       FROM inventory_transactions t
-      JOIN items i ON t.item_id = i.id
-      JOIN units u ON i.unit_id = u.id
-      LEFT JOIN gudang g ON t.gudang_id = g.id
-      JOIN users us ON t.user_id = us.id
-      WHERE t.type = ?
-      ${searchClause}
+      JOIN items i          ON t.item_id = i.id
+      JOIN units u          ON i.unit_id = u.id
+      LEFT JOIN gudang g    ON t.gudang_id = g.id
+      LEFT JOIN gudang gt   ON t.gudang_tujuan_id = gt.id
+      JOIN users us         ON t.user_id = us.id
+      ${kondisiType}
+      ${pencarian ? `AND (i.name LIKE ? OR t.transaction_code LIKE ?)` : ''}
       ORDER BY t.date DESC, t.id DESC
       LIMIT ? OFFSET ?
-    `, type, ...searchParams, limit, offset),
+    `, ...paramType, ...paramPencarian, limit, offset),
 
     prisma.$queryRawUnsafe<[{ total: bigint }]>(`
-      SELECT COUNT(*) as total
+      SELECT COUNT(*) AS total
       FROM inventory_transactions t
       JOIN items i ON t.item_id = i.id
-      WHERE t.type = ?
-      ${searchClause}
-    `, type, ...searchParams)
+      ${kondisiType}
+      ${pencarian ? `AND (i.name LIKE ? OR t.transaction_code LIKE ?)` : ''}
+    `, ...paramType, ...paramPencarian)
   ])
 
   return {
-    data: transactions.map(t => ({
+    data: transaksi.map(t => ({
       ...t,
       date: t.date instanceof Date ? t.date.toISOString() : t.date
     })),
     success: true,
     message: 'Data berhasil diambil',
-    total: Number(countResult[0].total),
-    page,
+    total: Number(hasilHitung[0].total),
+    page: halaman,
     limit
   }
 })

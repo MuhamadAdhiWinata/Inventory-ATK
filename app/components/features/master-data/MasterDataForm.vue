@@ -105,7 +105,7 @@
             </div>
 
             <!-- Stok -->
-            <div class="grid grid-cols-2 gap-3">
+            <!-- <div class="grid grid-cols-2 gap-3">
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-card-foreground">
                   Stok Awal <span class="text-destructive">*</span>
@@ -135,7 +135,7 @@
                 />
                 <p v-if="errors.stokMin" class="text-xs text-destructive">{{ errors.stokMin }}</p>
               </div>
-            </div>
+            </div> -->
 
             <!-- Footer -->
             <div class="flex justify-end gap-3 pt-2">
@@ -211,7 +211,7 @@ const filteredSubKategori = computed(() => {
 watch(() => props.item, (item) => {
   if (item) {
     form.namaBarang = item.namaBarang
-    form.currentStock = item.currentStock
+    // form.currentStock = item.currentStock
     form.stokMin = item.stokMin
 
     const subKat = props.subKategoriList.find(sk => sk.name === item.subKategori)

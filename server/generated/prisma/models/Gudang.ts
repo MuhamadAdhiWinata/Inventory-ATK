@@ -216,7 +216,8 @@ export type GudangWhereInput = {
   location?: Prisma.StringNullableFilter<"Gudang"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Gudang"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Gudang"> | Date | string
-  transactions?: Prisma.InventoryTransactionListRelationFilter
+  transaksiAsal?: Prisma.InventoryTransactionListRelationFilter
+  transaksiTujuan?: Prisma.InventoryTransactionListRelationFilter
 }
 
 export type GudangOrderByWithRelationInput = {
@@ -225,7 +226,8 @@ export type GudangOrderByWithRelationInput = {
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  transactions?: Prisma.InventoryTransactionOrderByRelationAggregateInput
+  transaksiAsal?: Prisma.InventoryTransactionOrderByRelationAggregateInput
+  transaksiTujuan?: Prisma.InventoryTransactionOrderByRelationAggregateInput
   _relevance?: Prisma.GudangOrderByRelevanceInput
 }
 
@@ -238,7 +240,8 @@ export type GudangWhereUniqueInput = Prisma.AtLeast<{
   location?: Prisma.StringNullableFilter<"Gudang"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Gudang"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Gudang"> | Date | string
-  transactions?: Prisma.InventoryTransactionListRelationFilter
+  transaksiAsal?: Prisma.InventoryTransactionListRelationFilter
+  transaksiTujuan?: Prisma.InventoryTransactionListRelationFilter
 }, "id" | "name">
 
 export type GudangOrderByWithAggregationInput = {
@@ -270,7 +273,8 @@ export type GudangCreateInput = {
   location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  transactions?: Prisma.InventoryTransactionCreateNestedManyWithoutGudangInput
+  transaksiAsal?: Prisma.InventoryTransactionCreateNestedManyWithoutGudangInput
+  transaksiTujuan?: Prisma.InventoryTransactionCreateNestedManyWithoutGudangTujuanInput
 }
 
 export type GudangUncheckedCreateInput = {
@@ -279,7 +283,8 @@ export type GudangUncheckedCreateInput = {
   location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  transactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutGudangInput
+  transaksiAsal?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutGudangInput
+  transaksiTujuan?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutGudangTujuanInput
 }
 
 export type GudangUpdateInput = {
@@ -287,7 +292,8 @@ export type GudangUpdateInput = {
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  transactions?: Prisma.InventoryTransactionUpdateManyWithoutGudangNestedInput
+  transaksiAsal?: Prisma.InventoryTransactionUpdateManyWithoutGudangNestedInput
+  transaksiTujuan?: Prisma.InventoryTransactionUpdateManyWithoutGudangTujuanNestedInput
 }
 
 export type GudangUncheckedUpdateInput = {
@@ -296,7 +302,8 @@ export type GudangUncheckedUpdateInput = {
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  transactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutGudangNestedInput
+  transaksiAsal?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutGudangNestedInput
+  transaksiTujuan?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutGudangTujuanNestedInput
 }
 
 export type GudangCreateManyInput = {
@@ -320,6 +327,11 @@ export type GudangUncheckedUpdateManyInput = {
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type GudangNullableScalarRelationFilter = {
+  is?: Prisma.GudangWhereInput | null
+  isNot?: Prisma.GudangWhereInput | null
 }
 
 export type GudangOrderByRelevanceInput = {
@@ -360,75 +372,136 @@ export type GudangSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
-export type GudangNullableScalarRelationFilter = {
-  is?: Prisma.GudangWhereInput | null
-  isNot?: Prisma.GudangWhereInput | null
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
-export type GudangCreateNestedOneWithoutTransactionsInput = {
-  create?: Prisma.XOR<Prisma.GudangCreateWithoutTransactionsInput, Prisma.GudangUncheckedCreateWithoutTransactionsInput>
-  connectOrCreate?: Prisma.GudangCreateOrConnectWithoutTransactionsInput
+export type GudangCreateNestedOneWithoutTransaksiAsalInput = {
+  create?: Prisma.XOR<Prisma.GudangCreateWithoutTransaksiAsalInput, Prisma.GudangUncheckedCreateWithoutTransaksiAsalInput>
+  connectOrCreate?: Prisma.GudangCreateOrConnectWithoutTransaksiAsalInput
   connect?: Prisma.GudangWhereUniqueInput
 }
 
-export type GudangUpdateOneWithoutTransactionsNestedInput = {
-  create?: Prisma.XOR<Prisma.GudangCreateWithoutTransactionsInput, Prisma.GudangUncheckedCreateWithoutTransactionsInput>
-  connectOrCreate?: Prisma.GudangCreateOrConnectWithoutTransactionsInput
-  upsert?: Prisma.GudangUpsertWithoutTransactionsInput
+export type GudangCreateNestedOneWithoutTransaksiTujuanInput = {
+  create?: Prisma.XOR<Prisma.GudangCreateWithoutTransaksiTujuanInput, Prisma.GudangUncheckedCreateWithoutTransaksiTujuanInput>
+  connectOrCreate?: Prisma.GudangCreateOrConnectWithoutTransaksiTujuanInput
+  connect?: Prisma.GudangWhereUniqueInput
+}
+
+export type GudangUpdateOneWithoutTransaksiAsalNestedInput = {
+  create?: Prisma.XOR<Prisma.GudangCreateWithoutTransaksiAsalInput, Prisma.GudangUncheckedCreateWithoutTransaksiAsalInput>
+  connectOrCreate?: Prisma.GudangCreateOrConnectWithoutTransaksiAsalInput
+  upsert?: Prisma.GudangUpsertWithoutTransaksiAsalInput
   disconnect?: Prisma.GudangWhereInput | boolean
   delete?: Prisma.GudangWhereInput | boolean
   connect?: Prisma.GudangWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.GudangUpdateToOneWithWhereWithoutTransactionsInput, Prisma.GudangUpdateWithoutTransactionsInput>, Prisma.GudangUncheckedUpdateWithoutTransactionsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GudangUpdateToOneWithWhereWithoutTransaksiAsalInput, Prisma.GudangUpdateWithoutTransaksiAsalInput>, Prisma.GudangUncheckedUpdateWithoutTransaksiAsalInput>
 }
 
-export type GudangCreateWithoutTransactionsInput = {
+export type GudangUpdateOneWithoutTransaksiTujuanNestedInput = {
+  create?: Prisma.XOR<Prisma.GudangCreateWithoutTransaksiTujuanInput, Prisma.GudangUncheckedCreateWithoutTransaksiTujuanInput>
+  connectOrCreate?: Prisma.GudangCreateOrConnectWithoutTransaksiTujuanInput
+  upsert?: Prisma.GudangUpsertWithoutTransaksiTujuanInput
+  disconnect?: Prisma.GudangWhereInput | boolean
+  delete?: Prisma.GudangWhereInput | boolean
+  connect?: Prisma.GudangWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GudangUpdateToOneWithWhereWithoutTransaksiTujuanInput, Prisma.GudangUpdateWithoutTransaksiTujuanInput>, Prisma.GudangUncheckedUpdateWithoutTransaksiTujuanInput>
+}
+
+export type GudangCreateWithoutTransaksiAsalInput = {
   name: string
   location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  transaksiTujuan?: Prisma.InventoryTransactionCreateNestedManyWithoutGudangTujuanInput
 }
 
-export type GudangUncheckedCreateWithoutTransactionsInput = {
+export type GudangUncheckedCreateWithoutTransaksiAsalInput = {
   id?: number
   name: string
   location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  transaksiTujuan?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutGudangTujuanInput
 }
 
-export type GudangCreateOrConnectWithoutTransactionsInput = {
+export type GudangCreateOrConnectWithoutTransaksiAsalInput = {
   where: Prisma.GudangWhereUniqueInput
-  create: Prisma.XOR<Prisma.GudangCreateWithoutTransactionsInput, Prisma.GudangUncheckedCreateWithoutTransactionsInput>
+  create: Prisma.XOR<Prisma.GudangCreateWithoutTransaksiAsalInput, Prisma.GudangUncheckedCreateWithoutTransaksiAsalInput>
 }
 
-export type GudangUpsertWithoutTransactionsInput = {
-  update: Prisma.XOR<Prisma.GudangUpdateWithoutTransactionsInput, Prisma.GudangUncheckedUpdateWithoutTransactionsInput>
-  create: Prisma.XOR<Prisma.GudangCreateWithoutTransactionsInput, Prisma.GudangUncheckedCreateWithoutTransactionsInput>
+export type GudangCreateWithoutTransaksiTujuanInput = {
+  name: string
+  location?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transaksiAsal?: Prisma.InventoryTransactionCreateNestedManyWithoutGudangInput
+}
+
+export type GudangUncheckedCreateWithoutTransaksiTujuanInput = {
+  id?: number
+  name: string
+  location?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transaksiAsal?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutGudangInput
+}
+
+export type GudangCreateOrConnectWithoutTransaksiTujuanInput = {
+  where: Prisma.GudangWhereUniqueInput
+  create: Prisma.XOR<Prisma.GudangCreateWithoutTransaksiTujuanInput, Prisma.GudangUncheckedCreateWithoutTransaksiTujuanInput>
+}
+
+export type GudangUpsertWithoutTransaksiAsalInput = {
+  update: Prisma.XOR<Prisma.GudangUpdateWithoutTransaksiAsalInput, Prisma.GudangUncheckedUpdateWithoutTransaksiAsalInput>
+  create: Prisma.XOR<Prisma.GudangCreateWithoutTransaksiAsalInput, Prisma.GudangUncheckedCreateWithoutTransaksiAsalInput>
   where?: Prisma.GudangWhereInput
 }
 
-export type GudangUpdateToOneWithWhereWithoutTransactionsInput = {
+export type GudangUpdateToOneWithWhereWithoutTransaksiAsalInput = {
   where?: Prisma.GudangWhereInput
-  data: Prisma.XOR<Prisma.GudangUpdateWithoutTransactionsInput, Prisma.GudangUncheckedUpdateWithoutTransactionsInput>
+  data: Prisma.XOR<Prisma.GudangUpdateWithoutTransaksiAsalInput, Prisma.GudangUncheckedUpdateWithoutTransaksiAsalInput>
 }
 
-export type GudangUpdateWithoutTransactionsInput = {
+export type GudangUpdateWithoutTransaksiAsalInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transaksiTujuan?: Prisma.InventoryTransactionUpdateManyWithoutGudangTujuanNestedInput
 }
 
-export type GudangUncheckedUpdateWithoutTransactionsInput = {
+export type GudangUncheckedUpdateWithoutTransaksiAsalInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transaksiTujuan?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutGudangTujuanNestedInput
+}
+
+export type GudangUpsertWithoutTransaksiTujuanInput = {
+  update: Prisma.XOR<Prisma.GudangUpdateWithoutTransaksiTujuanInput, Prisma.GudangUncheckedUpdateWithoutTransaksiTujuanInput>
+  create: Prisma.XOR<Prisma.GudangCreateWithoutTransaksiTujuanInput, Prisma.GudangUncheckedCreateWithoutTransaksiTujuanInput>
+  where?: Prisma.GudangWhereInput
+}
+
+export type GudangUpdateToOneWithWhereWithoutTransaksiTujuanInput = {
+  where?: Prisma.GudangWhereInput
+  data: Prisma.XOR<Prisma.GudangUpdateWithoutTransaksiTujuanInput, Prisma.GudangUncheckedUpdateWithoutTransaksiTujuanInput>
+}
+
+export type GudangUpdateWithoutTransaksiTujuanInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transaksiAsal?: Prisma.InventoryTransactionUpdateManyWithoutGudangNestedInput
+}
+
+export type GudangUncheckedUpdateWithoutTransaksiTujuanInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transaksiAsal?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutGudangNestedInput
 }
 
 
@@ -437,11 +510,13 @@ export type GudangUncheckedUpdateWithoutTransactionsInput = {
  */
 
 export type GudangCountOutputType = {
-  transactions: number
+  transaksiAsal: number
+  transaksiTujuan: number
 }
 
 export type GudangCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  transactions?: boolean | GudangCountOutputTypeCountTransactionsArgs
+  transaksiAsal?: boolean | GudangCountOutputTypeCountTransaksiAsalArgs
+  transaksiTujuan?: boolean | GudangCountOutputTypeCountTransaksiTujuanArgs
 }
 
 /**
@@ -457,7 +532,14 @@ export type GudangCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
 /**
  * GudangCountOutputType without action
  */
-export type GudangCountOutputTypeCountTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type GudangCountOutputTypeCountTransaksiAsalArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryTransactionWhereInput
+}
+
+/**
+ * GudangCountOutputType without action
+ */
+export type GudangCountOutputTypeCountTransaksiTujuanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.InventoryTransactionWhereInput
 }
 
@@ -468,7 +550,8 @@ export type GudangSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  transactions?: boolean | Prisma.Gudang$transactionsArgs<ExtArgs>
+  transaksiAsal?: boolean | Prisma.Gudang$transaksiAsalArgs<ExtArgs>
+  transaksiTujuan?: boolean | Prisma.Gudang$transaksiTujuanArgs<ExtArgs>
   _count?: boolean | Prisma.GudangCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gudang"]>
 
@@ -484,14 +567,16 @@ export type GudangSelectScalar = {
 
 export type GudangOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "location" | "createdAt" | "updatedAt", ExtArgs["result"]["gudang"]>
 export type GudangInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  transactions?: boolean | Prisma.Gudang$transactionsArgs<ExtArgs>
+  transaksiAsal?: boolean | Prisma.Gudang$transaksiAsalArgs<ExtArgs>
+  transaksiTujuan?: boolean | Prisma.Gudang$transaksiTujuanArgs<ExtArgs>
   _count?: boolean | Prisma.GudangCountOutputTypeDefaultArgs<ExtArgs>
 }
 
 export type $GudangPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Gudang"
   objects: {
-    transactions: Prisma.$InventoryTransactionPayload<ExtArgs>[]
+    transaksiAsal: Prisma.$InventoryTransactionPayload<ExtArgs>[]
+    transaksiTujuan: Prisma.$InventoryTransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -839,7 +924,8 @@ readonly fields: GudangFieldRefs;
  */
 export interface Prisma__GudangClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  transactions<T extends Prisma.Gudang$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Gudang$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transaksiAsal<T extends Prisma.Gudang$transaksiAsalArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Gudang$transaksiAsalArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transaksiTujuan<T extends Prisma.Gudang$transaksiTujuanArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Gudang$transaksiTujuanArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1217,9 +1303,33 @@ export type GudangDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * Gudang.transactions
+ * Gudang.transaksiAsal
  */
-export type Gudang$transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Gudang$transaksiAsalArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryTransaction
+   */
+  select?: Prisma.InventoryTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryTransaction
+   */
+  omit?: Prisma.InventoryTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryTransactionInclude<ExtArgs> | null
+  where?: Prisma.InventoryTransactionWhereInput
+  orderBy?: Prisma.InventoryTransactionOrderByWithRelationInput | Prisma.InventoryTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryTransactionScalarFieldEnum | Prisma.InventoryTransactionScalarFieldEnum[]
+}
+
+/**
+ * Gudang.transaksiTujuan
+ */
+export type Gudang$transaksiTujuanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the InventoryTransaction
    */

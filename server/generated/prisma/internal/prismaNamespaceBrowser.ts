@@ -56,8 +56,8 @@ export const ModelName = {
   SubCategory: 'SubCategory',
   Unit: 'Unit',
   Item: 'Item',
-  Gudang: 'Gudang',
-  InventoryTransaction: 'InventoryTransaction'
+  InventoryTransaction: 'InventoryTransaction',
+  Gudang: 'Gudang'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -126,13 +126,31 @@ export const ItemScalarFieldEnum = {
   name: 'name',
   subCategoryId: 'subCategoryId',
   unitId: 'unitId',
-  currentStock: 'currentStock',
   minStock: 'minStock',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof ItemScalarFieldEnum]
+
+
+export const InventoryTransactionScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  userId: 'userId',
+  type: 'type',
+  transactionCode: 'transactionCode',
+  quantity: 'quantity',
+  note: 'note',
+  description: 'description',
+  gudangId: 'gudangId',
+  gudangTujuanId: 'gudangTujuanId',
+  date: 'date',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InventoryTransactionScalarFieldEnum = (typeof InventoryTransactionScalarFieldEnum)[keyof typeof InventoryTransactionScalarFieldEnum]
 
 
 export const GudangScalarFieldEnum = {
@@ -144,24 +162,6 @@ export const GudangScalarFieldEnum = {
 } as const
 
 export type GudangScalarFieldEnum = (typeof GudangScalarFieldEnum)[keyof typeof GudangScalarFieldEnum]
-
-
-export const InventoryTransactionScalarFieldEnum = {
-  id: 'id',
-  itemId: 'itemId',
-  userId: 'userId',
-  gudangId: 'gudangId',
-  type: 'type',
-  transactionCode: 'transactionCode',
-  quantity: 'quantity',
-  note: 'note',
-  description: 'description',
-  date: 'date',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type InventoryTransactionScalarFieldEnum = (typeof InventoryTransactionScalarFieldEnum)[keyof typeof InventoryTransactionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -218,14 +218,6 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
-export const GudangOrderByRelevanceFieldEnum = {
-  name: 'name',
-  location: 'location'
-} as const
-
-export type GudangOrderByRelevanceFieldEnum = (typeof GudangOrderByRelevanceFieldEnum)[keyof typeof GudangOrderByRelevanceFieldEnum]
-
-
 export const InventoryTransactionOrderByRelevanceFieldEnum = {
   transactionCode: 'transactionCode',
   note: 'note',
@@ -233,4 +225,12 @@ export const InventoryTransactionOrderByRelevanceFieldEnum = {
 } as const
 
 export type InventoryTransactionOrderByRelevanceFieldEnum = (typeof InventoryTransactionOrderByRelevanceFieldEnum)[keyof typeof InventoryTransactionOrderByRelevanceFieldEnum]
+
+
+export const GudangOrderByRelevanceFieldEnum = {
+  name: 'name',
+  location: 'location'
+} as const
+
+export type GudangOrderByRelevanceFieldEnum = (typeof GudangOrderByRelevanceFieldEnum)[keyof typeof GudangOrderByRelevanceFieldEnum]
 
