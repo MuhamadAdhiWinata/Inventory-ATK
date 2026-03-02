@@ -70,7 +70,7 @@ const transactions = ref<InventoryTransaction[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const currentPage = ref(1)
-const itemsPerPage = 10
+const itemsPerPage = 8
 const totalItems = ref(0)
 const searchQuery = ref('')
 

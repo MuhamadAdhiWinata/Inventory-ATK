@@ -127,6 +127,7 @@ import {
   Warehouse,
   ArrowBigDown,
   ArrowBigUp,
+  House,
 } from 'lucide-vue-next'
 import {
   Collapsible,
@@ -179,6 +180,7 @@ const navMain = computed<NavItem[]>(() => [
     icon: Warehouse,
     items: [
       { title: 'Inventory In', url: '/inventory-in', icon: ArrowBigDown },
+      { title: 'Transfer Gudang', url: '/transfer-gudang', icon: House },
       { title: 'Inventory Out', url: '/inventory-out', icon: ArrowBigUp },
     ],
   },
