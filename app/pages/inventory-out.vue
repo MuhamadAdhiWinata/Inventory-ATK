@@ -51,8 +51,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default',
-  // middleware: 'auth'
+    layout: 'default',
+    middleware: ['auth']
 })
 
 import { ArrowUpFromLineIcon } from 'lucide-vue-next'
@@ -84,7 +84,7 @@ const transaksiAkanDihapus = ref<InventoryTransaction | null>(null)
 const sedangMenghapus = ref(false)
 
 // Lookup data
-const daftarBarang = ref<{ id: number; code: string; name: string }[]>([])
+const daftarBarang = ref<{ id: number; code: string; name: string; unit: string }[]>([])
 const daftarGudang = ref<GudangItem[]>([])
 
 // Ambil data transaksi OUT
@@ -112,7 +112,7 @@ const ambilData = async () => {
 onMounted(async () => {
   try {
     const [barang, gudang] = await Promise.all([
-      $fetch<{ id: number; code: string; name: string }[]>('/api/items-simple'),
+      $fetch<{ id: number; code: string; name: string; unit: string }[]>('/api/items-simple'),
       inventoryService.getGudang()
     ])
     daftarBarang.value = barang

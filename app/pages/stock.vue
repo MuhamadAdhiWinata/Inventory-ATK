@@ -238,7 +238,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default',
+    layout: 'default',
+    middleware: ['auth']
 })
 
 import { WarehouseIcon, SearchIcon, AlertCircleIcon, PackageIcon } from 'lucide-vue-next'

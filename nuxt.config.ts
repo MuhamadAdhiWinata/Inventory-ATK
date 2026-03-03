@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   ssr: false,
   css: ['~/assets/css/tailwind.css'],
-  modules: ['shadcn-nuxt'],
+  modules: ['shadcn-nuxt', '@pinia/nuxt',],
   shadcn: {
     prefix: '',
     componentDir: './app/components/ui'

@@ -54,11 +54,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { useAuthStore } from '@/stores/auth'
 import { useToast } from '~/hooks/use-toast'
 
-// sementara dummy user
-const username = computed(() => 'John Doe')
-const email = computed(() => 'user@example.com')
+const authStore = useAuthStore()
+const { toast } = useToast()
+
+// Ambil dari authStore, bukan dummy
+const username = computed(() => authStore.user?.name ?? '—')
+const email = computed(() => authStore.user?.email ?? '')
 
 function getUserInitials(): string {
   const names = username.value.split(' ')
@@ -69,16 +73,12 @@ function getUserInitials(): string {
 }
 
 async function handleLogout() {
-  const token = useCookie('token')
-  token.value = null
+  await authStore.logout()
 
-  const { toast } = useToast()
   toast({
     title: 'Logged out',
     description: "You've been logged out successfully.",
     variant: 'success',
   })
-
-  await navigateTo('/login')
 }
 </script>

@@ -132,7 +132,10 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+definePageMeta({
+    layout: 'default',
+    middleware: ['auth']
+})
 import { LayoutGridIcon, PlusIcon, PencilIcon, Trash2Icon, XIcon } from 'lucide-vue-next'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import { useToast } from '@/hooks/use-toast'

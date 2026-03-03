@@ -2,10 +2,8 @@
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center">
-        <!-- Backdrop -->
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="handleClose" />
 
-        <!-- Modal -->
         <div class="relative z-10 w-full max-w-lg mx-4 bg-card rounded-lg shadow-xl border border-border">
           <!-- Header -->
           <div class="flex items-center justify-between p-6 border-b border-border">
@@ -31,7 +29,7 @@
               </label>
               <select
                 :value="form.itemId"
-                @change="(e) => form.itemId = Number((e.target as HTMLSelectElement).value)"
+                @change="(e) => onBarangChange(Number((e.target as HTMLSelectElement).value))"
                 class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 :class="{ 'border-destructive': errors.itemId }"
               >
@@ -43,22 +41,50 @@
               <p v-if="errors.itemId" class="text-xs text-destructive">{{ errors.itemId }}</p>
             </div>
 
-            <!-- Gudang Asal & Quantity -->
-            <div class="grid grid-cols-2 gap-3">
-              <div class="space-y-1.5">
-                <label class="text-sm font-medium text-card-foreground">Gudang Asal</label>
-                <select
-                  :value="form.gudangId"
-                  @change="(e) => form.gudangId = Number((e.target as HTMLSelectElement).value)"
-                  class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                >
-                  <option :value="null">Pilih gudang</option>
-                  <option v-for="gudang in gudangList" :key="gudang.id" :value="gudang.id">
-                    {{ gudang.name }}
-                  </option>
-                </select>
-              </div>
+            <!-- Gudang Asal -->
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-card-foreground">Gudang Asal</label>
 
+              <!-- Loading stok -->
+              <div v-if="sedangMuatStok" class="h-9 rounded-md border border-input bg-muted animate-pulse" />
+
+              <select
+                v-else
+                :value="form.gudangId"
+                @change="(e) => form.gudangId = Number((e.target as HTMLSelectElement).value)"
+                class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                <option :value="null">Pilih gudang</option>
+                <option v-for="gudang in gudangList" :key="gudang.id" :value="gudang.id">
+                  {{ gudang.name }}
+                  <template v-if="form.itemId">
+                    — Stok: {{ getStokGudang(gudang.id) }} {{ satuanDipilih }}
+                  </template>
+                </option>
+              </select>
+
+              <!-- Info stok gudang yang dipilih -->
+              <div
+                v-if="form.itemId && form.gudangId && !sedangMuatStok"
+                class="flex items-center gap-2 rounded-md px-3 py-2 text-sm"
+                :class="stokTersedia === 0
+                  ? 'bg-destructive/10 text-destructive'
+                  : stokTersedia <= minStokBarang
+                    ? 'bg-amber-50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-400'
+                    : 'bg-muted text-foreground'"
+              >
+                <WarehouseIcon class="h-4 w-4 shrink-0" />
+                <span>
+                  Stok tersedia:
+                  <span class="font-semibold">{{ stokTersedia }} {{ satuanDipilih }}</span>
+                  <span v-if="stokTersedia === 0" class="ml-1">(kosong)</span>
+                  <span v-else-if="stokTersedia <= minStokBarang" class="ml-1">(hampir habis)</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Quantity & Tanggal -->
+            <div class="grid grid-cols-2 gap-3">
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-card-foreground">
                   Quantity <span class="text-destructive">*</span>
@@ -73,20 +99,19 @@
                 />
                 <p v-if="errors.quantity" class="text-xs text-destructive">{{ errors.quantity }}</p>
               </div>
-            </div>
 
-            <!-- Tanggal -->
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-card-foreground">
-                Tanggal <span class="text-destructive">*</span>
-              </label>
-              <input
-                v-model="form.date"
-                type="date"
-                class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                :class="{ 'border-destructive': errors.date }"
-              />
-              <p v-if="errors.date" class="text-xs text-destructive">{{ errors.date }}</p>
+              <div class="space-y-1.5">
+                <label class="text-sm font-medium text-card-foreground">
+                  Tanggal <span class="text-destructive">*</span>
+                </label>
+                <input
+                  v-model="form.date"
+                  type="date"
+                  class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  :class="{ 'border-destructive': errors.date }"
+                />
+                <p v-if="errors.date" class="text-xs text-destructive">{{ errors.date }}</p>
+              </div>
             </div>
 
             <!-- Description -->
@@ -137,13 +162,19 @@
 </template>
 
 <script setup lang="ts">
-import { X } from 'lucide-vue-next'
+import { X, WarehouseIcon } from 'lucide-vue-next'
 import type { InventoryTransaction, GudangItem } from '#shared/types/IInventory'
 
 interface ItemOption {
   id: number
   code: string
   name: string
+  unit: string
+}
+
+interface StokGudang {
+  gudangId: number
+  quantity: number
 }
 
 interface Props {
@@ -162,14 +193,17 @@ const emit = defineEmits<{
 
 const isEditMode = computed(() => !!props.transaction)
 const submitting = ref(false)
+const sedangMuatStok = ref(false)
+const stokPerGudang = ref<StokGudang[]>([])
+const minStokBarang = ref(0)
 
-const today = new Date().toISOString().split('T')[0]
+const hariIni = new Date().toISOString().split('T')[0]
 
 const defaultForm = {
   itemId: null as number | null,
   gudangId: null as number | null,
   quantity: 1,
-  date: today,
+  date: hariIni,
   description: '',
   note: '',
 }
@@ -177,7 +211,36 @@ const defaultForm = {
 const form = reactive({ ...defaultForm })
 const errors = reactive<Record<string, string>>({})
 
-watch(() => props.transaction, (transaksi) => {
+const satuanDipilih = computed(() => {
+  return props.itemList.find(b => b.id === form.itemId)?.unit ?? ''
+})
+
+const stokTersedia = computed(() => {
+  if (!form.gudangId) return 0
+  return stokPerGudang.value.find(s => s.gudangId === form.gudangId)?.quantity ?? 0
+})
+
+function getStokGudang(gudangId: number): number {
+  return stokPerGudang.value.find(s => s.gudangId === gudangId)?.quantity ?? 0
+}
+
+async function onBarangChange(itemId: number) {
+  form.itemId = itemId
+  form.gudangId = null
+  stokPerGudang.value = []
+  sedangMuatStok.value = true
+  try {
+    const hasil = await $fetch<any[]>('/api/stock', { params: { itemId } })
+    stokPerGudang.value = hasil.map(s => ({ gudangId: s.gudangId, quantity: s.quantity }))
+    minStokBarang.value = hasil[0]?.minStock ?? 0
+  } catch (err) {
+    console.error('Gagal ambil stok:', err)
+  } finally {
+    sedangMuatStok.value = false
+  }
+}
+
+watch(() => props.transaction, async (transaksi) => {
   if (transaksi) {
     form.itemId = transaksi.itemId
     form.gudangId = transaksi.gudangId
@@ -185,14 +248,19 @@ watch(() => props.transaction, (transaksi) => {
     form.date = transaksi.date.split('T')[0]
     form.description = transaksi.description ?? ''
     form.note = transaksi.note ?? ''
+    if (transaksi.itemId) await onBarangChange(transaksi.itemId)
+    // Restore gudangId setelah fetch (onBarangChange reset gudangId)
+    form.gudangId = transaksi.gudangId
   } else {
     Object.assign(form, defaultForm)
+    stokPerGudang.value = []
   }
 }, { immediate: true })
 
 watch(() => props.isOpen, (terbuka) => {
   if (!terbuka) {
     Object.assign(form, defaultForm)
+    stokPerGudang.value = []
     Object.keys(errors).forEach(k => delete errors[k])
   }
 })
@@ -201,6 +269,9 @@ function validate(): boolean {
   Object.keys(errors).forEach(k => delete errors[k])
   if (!form.itemId) errors.itemId = 'Barang wajib dipilih'
   if (!form.quantity || form.quantity < 1) errors.quantity = 'Quantity minimal 1'
+  if (form.gudangId && stokTersedia.value < form.quantity) {
+    errors.quantity = `Stok tidak cukup (tersedia: ${stokTersedia.value} ${satuanDipilih.value})`
+  }
   if (!form.date) errors.date = 'Tanggal wajib diisi'
   return Object.keys(errors).length === 0
 }

@@ -51,7 +51,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default',
+    layout: 'default',
+    middleware: ['auth']
 })
 
 import { ArrowRightLeftIcon } from 'lucide-vue-next'

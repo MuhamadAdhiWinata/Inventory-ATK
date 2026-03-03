@@ -51,8 +51,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default',
-  // middleware: 'auth'
+    layout: 'default',
+    middleware: ['auth']
 })
 
 import { ArrowDownToLineIcon } from 'lucide-vue-next'

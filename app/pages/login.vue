@@ -22,10 +22,10 @@
                 </div>
               
               <div class="grid gap-6">
-                <!-- Username -->
+                <!-- Username / Email -->
                 <div class="grid gap-3">
                   <Label for="username" class="text-sm font-medium text-card-foreground">
-                    Username
+                    Email
                   </Label>
                   <div class="relative">
                     <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
@@ -36,18 +36,18 @@
                     </div>
                     <Input
                       id="username"
-                      v-model="formData.username"
-                      type="text"
-                      placeholder="Masukkan username"
-                      :class="{ 'border-destructive focus-visible:ring-destructive/20': errors.username }"
+                      v-model="formData.email"
+                      type="email"
+                      placeholder="Masukkan email"
+                      :class="{ 'border-destructive focus-visible:ring-destructive/20': errors.email }"
                       :disabled="submitting"
-                      autocomplete="username"
+                      autocomplete="email"
                       required
                       class="pl-10"
                     />
                   </div>
-                  <p v-if="errors.username" class="text-sm text-destructive">
-                    {{ errors.username }}
+                  <p v-if="errors.email" class="text-sm text-destructive">
+                    {{ errors.email }}
                   </p>
                 </div>
 
@@ -94,6 +94,14 @@
                   </p>
                 </div>
 
+                <!-- Error global -->
+                <div v-if="pesanError" class="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2.5 text-sm text-destructive flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>
+                  </svg>
+                  {{ pesanError }}
+                </div>
+
                 <!-- Submit Button -->
                 <Button 
                   type="submit" 
@@ -120,13 +128,6 @@
               © 2026 Inventory App. Sistem Inventory ATK.
             </div>
           </div>
-          <!-- dumm account -->
-          <div class="py-2 rounded flex justify-center border bg-secondary">
-            <div class="text-xs text-primary text-left space-y-1">
-              <p><span class="font-semibold">Username:</span> inventory</p>
-              <p><span class="font-semibold">Password:</span> inventory123</p>
-            </div>
-          </div>
         </form>
       </div>
     </div>
@@ -135,97 +136,49 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'auth'
+  layout: 'auth',
+  middleware: []
 })
 
-import { reactive, ref } from 'vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
+import { useAuthStore } from '@/stores/auth'
 
-const { toast } = useToast()
+const authStore = useAuthStore()
+
+// Redirect jika sudah login
+onMounted(() => {
+  if (authStore.isLoggedIn) navigateTo('/dashboard')
+})
 
 const submitting = ref(false)
 const showPassword = ref(false)
+const pesanError = ref('')
 
-const formData = reactive({
-  username: '',
-  password: ''
-})
-
-const errors = reactive({
-  username: '',
-  password: ''
-})
+const formData = reactive({ email: '', password: '' })
+const errors = reactive({ email: '', password: '' })
 
 function validateForm(): boolean {
-  let isValid = true
-
-  // Reset errors
-  errors.username = ''
+  errors.email = ''
   errors.password = ''
-
-  // Validate username
-  if (!formData.username.trim()) {
-    errors.username = 'Username wajib diisi'
-    isValid = false
-  } else if (formData.username.length < 4) {
-    errors.username = 'Username minimal 4 karakter'
-    isValid = false
-  }
-
-  // Validate password
-  if (!formData.password.trim()) {
-    errors.password = 'Password wajib diisi'
-    isValid = false
-  } else if (formData.password.length < 6) {
-    errors.password = 'Password minimal 6 karakter'
-    isValid = false
-  }
-
-  return isValid
+  pesanError.value = ''
+  let valid = true
+  if (!formData.email.trim()) { errors.email = 'Email wajib diisi'; valid = false }
+  if (!formData.password) { errors.password = 'Password wajib diisi'; valid = false }
+  return valid
 }
 
 async function handleLogin() {
-  if (!validateForm()) {
-    return
-  }
-
+  if (!validateForm()) return
   submitting.value = true
-
   try {
-    // TODO: Replace with actual API call
-    // const response = await login(formData.username, formData.password)
-    // localStorage.setItem('token', response.token)
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    // Dummy validation
-    if (formData.username === 'inventory' && formData.password === 'inventory123') {
-      toast({
-        title: 'Login Berhasil',
-        description: 'Selamat datang kembali!'
-      })
-      
-      // Redirect to dashboard
-      await navigateTo('/dashboard')
-    } else {
-      toast({
-        title: 'Login Gagal',
-        description: 'Username atau password salah',
-        variant: 'destructive'
-      })
-    }
-  } catch (error) {
-    toast({
-      title: 'Error',
-      description: 'Terjadi kesalahan saat login',
-      variant: 'destructive'
-    })
+    await authStore.login(formData.email, formData.password)
+    await navigateTo('/dashboard')
+  } catch (err: any) {
+    pesanError.value = err.data?.message ?? 'Email atau password salah'
   } finally {
     submitting.value = false
   }
@@ -233,38 +186,10 @@ async function handleLogin() {
 </script>
 
 <style scoped>
-/* Custom styling untuk konsistensi */
-:deep(.btn-primary) {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-:deep(.btn-primary:hover) {
-  background-color: color-mix(in oklch, var(--primary) 90%, transparent);
-}
-
-:deep(.btn-primary:disabled) {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Input focus state konsisten dengan dashboard */
 :deep(input:focus) {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px color-mix(in oklch, var(--primary) 20%, transparent);
 }
-
-/* Animasi untuk loading spinner */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin { animation: spin 1s linear infinite; }
 </style>
