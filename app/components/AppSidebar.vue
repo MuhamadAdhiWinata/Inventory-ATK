@@ -209,11 +209,11 @@ const navMain = computed<NavItem[]>(() => [
     url: '/user',
     icon: UserIcon,
   },
-  {
-    title: 'Pengaturan',
-    url: '#',
-    icon: Settings,
-  },
+  // {
+  //   title: 'Pengaturan',
+  //   url: '#',
+  //   icon: Settings,
+  // },
 ])
 
 const isChildActive = (childItem: NavItem) => {

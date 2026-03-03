@@ -24,22 +24,20 @@
 
           <!-- Body -->
           <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
-            <!-- Barang -->
+
+            <!-- Barang — SearchableSelect -->
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-card-foreground">
                 Barang <span class="text-destructive">*</span>
               </label>
-              <select
-                :value="form.itemId"
-                @change="(e) => form.itemId = Number((e.target as HTMLSelectElement).value)"
-                class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                :class="{ 'border-destructive': errors.itemId }"
-              >
-                <option :value="null" disabled>Pilih barang</option>
-                <option v-for="item in itemList" :key="item.id" :value="item.id">
-                  {{ item.code }} - {{ item.name }}
-                </option>
-              </select>
+              <SearchableSelect
+                :model-value="form.itemId"
+                :options="barangOptions"
+                placeholder="Cari nama atau kode barang..."
+                search-placeholder="Ketik nama atau kode barang..."
+                :has-error="!!errors.itemId"
+                @change="(val) => form.itemId = val ? Number(val) : null"
+              />
               <p v-if="errors.itemId" class="text-xs text-destructive">{{ errors.itemId }}</p>
             </div>
 
@@ -139,6 +137,8 @@
 <script setup lang="ts">
 import { X } from 'lucide-vue-next'
 import type { InventoryTransaction, GudangItem } from '#shared/types/IInventory'
+import SearchableSelect from '@/components/ui/SearchableSelect.vue'
+import type { SelectOption } from '@/components/ui/SearchableSelect.vue'
 
 interface ItemOption {
   id: number
@@ -176,6 +176,16 @@ const defaultForm = {
 
 const form = reactive({ ...defaultForm })
 const errors = reactive<Record<string, string>>({})
+
+// Konversi itemList → SelectOption
+// label: nama barang, sublabel: kode barang (muncul sebagai hint)
+const barangOptions = computed<SelectOption[]>(() =>
+  props.itemList.map(b => ({
+    value: b.id,
+    label: b.name,
+    sublabel: b.code,
+  }))
+)
 
 // Populate form saat edit
 watch(() => props.transaction, (tx) => {

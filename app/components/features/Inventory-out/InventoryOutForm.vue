@@ -22,22 +22,20 @@
 
           <!-- Body -->
           <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
-            <!-- Barang -->
+
+            <!-- Barang — SearchableSelect -->
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-card-foreground">
                 Barang <span class="text-destructive">*</span>
               </label>
-              <select
-                :value="form.itemId"
-                @change="(e) => onBarangChange(Number((e.target as HTMLSelectElement).value))"
-                class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                :class="{ 'border-destructive': errors.itemId }"
-              >
-                <option :value="null" disabled>Pilih barang</option>
-                <option v-for="barang in itemList" :key="barang.id" :value="barang.id">
-                  {{ barang.code }} - {{ barang.name }}
-                </option>
-              </select>
+              <SearchableSelect
+                :model-value="form.itemId"
+                :options="barangOptions"
+                placeholder="Cari nama atau kode barang..."
+                search-placeholder="Ketik nama atau kode barang..."
+                :has-error="!!errors.itemId"
+                @change="(val) => onBarangChange(Number(val))"
+              />
               <p v-if="errors.itemId" class="text-xs text-destructive">{{ errors.itemId }}</p>
             </div>
 
@@ -45,7 +43,6 @@
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-card-foreground">Gudang Asal</label>
 
-              <!-- Loading stok -->
               <div v-if="sedangMuatStok" class="h-9 rounded-md border border-input bg-muted animate-pulse" />
 
               <select
@@ -55,15 +52,15 @@
                 class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 <option :value="null">Pilih gudang</option>
-                <option v-for="gudang in gudangList" :key="gudang.id" :value="gudang.id">
-                  {{ gudang.name }}
+                <option v-for="g in gudangList" :key="g.id" :value="g.id">
+                  {{ g.name }}
                   <template v-if="form.itemId">
-                    — Stok: {{ getStokGudang(gudang.id) }} {{ satuanDipilih }}
+                    — Stok: {{ getStokGudang(g.id) }} {{ satuanDipilih }}
                   </template>
                 </option>
               </select>
 
-              <!-- Info stok gudang yang dipilih -->
+              <!-- Info stok -->
               <div
                 v-if="form.itemId && form.gudangId && !sedangMuatStok"
                 class="flex items-center gap-2 rounded-md px-3 py-2 text-sm"
@@ -91,9 +88,7 @@
                 </label>
                 <input
                   v-model.number="form.quantity"
-                  type="number"
-                  min="1"
-                  placeholder="0"
+                  type="number" min="1" placeholder="0"
                   class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   :class="{ 'border-destructive': errors.quantity }"
                 />
@@ -105,8 +100,7 @@
                   Tanggal <span class="text-destructive">*</span>
                 </label>
                 <input
-                  v-model="form.date"
-                  type="date"
+                  v-model="form.date" type="date"
                   class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   :class="{ 'border-destructive': errors.date }"
                 />
@@ -118,8 +112,7 @@
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-card-foreground">Description</label>
               <input
-                v-model="form.description"
-                type="text"
+                v-model="form.description" type="text"
                 placeholder="Contoh: Distribusi ke kelas X IPA 1"
                 class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               />
@@ -129,27 +122,19 @@
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-card-foreground">Note</label>
               <textarea
-                v-model="form.note"
-                placeholder="Catatan tambahan..."
-                rows="2"
+                v-model="form.note" placeholder="Catatan tambahan..." rows="2"
                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
               />
             </div>
 
             <!-- Footer -->
             <div class="flex justify-end gap-3 pt-2">
-              <button
-                type="button"
-                @click="handleClose"
-                class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 transition-colors"
-              >
+              <button type="button" @click="handleClose"
+                class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 transition-colors">
                 Batal
               </button>
-              <button
-                type="submit"
-                :disabled="submitting"
-                class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-destructive text-destructive-foreground hover:bg-destructive/90 h-9 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              <button type="submit" :disabled="submitting"
+                class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-destructive text-destructive-foreground hover:bg-destructive/90 h-9 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 <div v-if="submitting" class="h-3.5 w-3.5 mr-2 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 {{ submitting ? 'Menyimpan...' : isEditMode ? 'Simpan Perubahan' : 'Tambah Transaksi' }}
               </button>
@@ -164,6 +149,8 @@
 <script setup lang="ts">
 import { X, WarehouseIcon } from 'lucide-vue-next'
 import type { InventoryTransaction, GudangItem } from '#shared/types/IInventory'
+import SearchableSelect from '@/components/ui/SearchableSelect.vue'
+import type { SelectOption } from '@/components/ui/SearchableSelect.vue'
 
 interface ItemOption {
   id: number
@@ -196,7 +183,6 @@ const submitting = ref(false)
 const sedangMuatStok = ref(false)
 const stokPerGudang = ref<StokGudang[]>([])
 const minStokBarang = ref(0)
-
 const hariIni = new Date().toISOString().split('T')[0]
 
 const defaultForm = {
@@ -211,9 +197,18 @@ const defaultForm = {
 const form = reactive({ ...defaultForm })
 const errors = reactive<Record<string, string>>({})
 
-const satuanDipilih = computed(() => {
-  return props.itemList.find(b => b.id === form.itemId)?.unit ?? ''
-})
+// Konversi itemList → SelectOption
+const barangOptions = computed<SelectOption[]>(() =>
+  props.itemList.map(b => ({
+    value: b.id,
+    label: b.name,
+    sublabel: b.code,
+  }))
+)
+
+const satuanDipilih = computed(() =>
+  props.itemList.find(b => b.id === form.itemId)?.unit ?? ''
+)
 
 const stokTersedia = computed(() => {
   if (!form.gudangId) return 0
@@ -240,25 +235,26 @@ async function onBarangChange(itemId: number) {
   }
 }
 
-watch(() => props.transaction, async (transaksi) => {
-  if (transaksi) {
-    form.itemId = transaksi.itemId
-    form.gudangId = transaksi.gudangId
-    form.quantity = transaksi.quantity
-    form.date = transaksi.date.split('T')[0]
-    form.description = transaksi.description ?? ''
-    form.note = transaksi.note ?? ''
-    if (transaksi.itemId) await onBarangChange(transaksi.itemId)
-    // Restore gudangId setelah fetch (onBarangChange reset gudangId)
-    form.gudangId = transaksi.gudangId
+watch(() => props.transaction, async (tx) => {
+  if (tx) {
+    form.itemId = tx.itemId
+    form.gudangId = tx.gudangId
+    form.quantity = tx.quantity
+    form.date = tx.date.split('T')[0]
+    form.description = tx.description ?? ''
+    form.note = tx.note ?? ''
+    if (tx.itemId) {
+      await onBarangChange(tx.itemId)
+      form.gudangId = tx.gudangId // restore setelah onBarangChange reset
+    }
   } else {
     Object.assign(form, defaultForm)
     stokPerGudang.value = []
   }
 }, { immediate: true })
 
-watch(() => props.isOpen, (terbuka) => {
-  if (!terbuka) {
+watch(() => props.isOpen, (open) => {
+  if (!open) {
     Object.assign(form, defaultForm)
     stokPerGudang.value = []
     Object.keys(errors).forEach(k => delete errors[k])
