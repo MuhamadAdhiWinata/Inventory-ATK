@@ -25,15 +25,15 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(email: string, password: string) {
+    async function login(identifier: string, password: string) {
     const data = await $fetch<{ user: User }>('/api/auth/login', {
-      method: 'POST',
-      body: { email, password }
+        method: 'POST',
+        body: { identifier, password }  // ← ganti dari { email, password }
     })
     user.value = data.user
     sudahDiinisialisasi.value = true
     return data.user
-  }
+    }
 
   async function logout() {
     await $fetch('/api/auth/logout', { method: 'POST' })

@@ -80,6 +80,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
+  username: 'username',
   password: 'password',
   role: 'role',
   createdAt: 'createdAt',
@@ -175,6 +176,7 @@ export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 export const UserOrderByRelevanceFieldEnum = {
   name: 'name',
   email: 'email',
+  username: 'username',
   password: 'password'
 } as const
 

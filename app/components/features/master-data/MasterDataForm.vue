@@ -204,7 +204,8 @@ const errors = reactive<Record<string, string>>({})
 
 const filteredSubKategori = computed(() => {
   if (!form.kategoriId) return []
-  return props.subKategoriList.filter(sk => sk.categoryId === Number(form.kategoriId))
+  return props.subKategoriList.filter(sk => Number(sk.kategoriId) === Number(form.kategoriId))
+  //                                              ^^^^^^^^^^^ ganti dari categoryId
 })
 
 // Populate form saat edit
@@ -216,7 +217,7 @@ watch(() => props.item, (item) => {
 
     const subKat = props.subKategoriList.find(sk => sk.name === item.subKategori)
     if (subKat) {
-      form.kategoriId = subKat.categoryId
+      form.kategoriId = subKat.kategoriId
       form.subKategoriId = subKat.id
     }
 

@@ -4,37 +4,41 @@ import { signToken } from '../../utils/jwt'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  const { email, password } = body
+  const { identifier, password } = body
 
-  if (!email || !password) {
-    throw createError({ statusCode: 400, message: 'Email dan password wajib diisi' })
+  if (!identifier || !password) {
+    throw createError({ statusCode: 400, message: 'Username/email dan password wajib diisi' })
   }
 
-  // Cari user
+  const input = identifier.trim().toLowerCase()
+
+  // Cari berdasarkan email ATAU username
   const users = await prisma.$queryRawUnsafe<{
     id: number
     name: string
+    username: string
     email: string
     password: string
     role: string
   }[]>(
-    `SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1`,
-    email.toLowerCase().trim()
+    `SELECT id, name, username, email, password, role
+     FROM users
+     WHERE LOWER(email) = ? OR LOWER(username) = ?
+     LIMIT 1`,
+    input, input
   )
 
   if (!users.length) {
-    throw createError({ statusCode: 401, message: 'Email atau password salah' })
+    throw createError({ statusCode: 401, message: 'Username/email atau password salah' })
   }
 
   const user = users[0]!
 
-  // Verifikasi password
   const passwordValid = await bcrypt.compare(password, user.password)
   if (!passwordValid) {
-    throw createError({ statusCode: 401, message: 'Email atau password salah' })
+    throw createError({ statusCode: 401, message: 'Username/email atau password salah' })
   }
 
-  // Generate token
   const token = await signToken({
     userId: user.id,
     email: user.email,
@@ -42,12 +46,11 @@ export default defineEventHandler(async (event) => {
     role: user.role
   })
 
-  // Set httpOnly cookie
   setCookie(event, 'auth_token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge: 60 * 60 * 8, // 8 jam
+    maxAge: 60 * 60 * 8,
     path: '/'
   })
 
@@ -56,6 +59,7 @@ export default defineEventHandler(async (event) => {
     user: {
       id: user.id,
       name: user.name,
+      username: user.username,
       email: user.email,
       role: user.role
     }

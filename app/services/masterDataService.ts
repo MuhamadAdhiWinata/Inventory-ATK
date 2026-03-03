@@ -9,7 +9,7 @@ export interface KategoriItem {
 export interface SubKategoriItem {
   id: number
   name: string
-  categoryId: number
+  kategoriId: number
 }
 
 export interface SatuanItem {
@@ -30,7 +30,7 @@ export class MasterDataService {
   }
 
   async getSubCategories() {
-    return await $fetch<{ id: number; name: string; categoryId: number }[]>('/api/sub-categories')
+    return await $fetch<{ id: number; name: string; kategoryId: number }[]>('/api/sub-categories')
   }
 
   async getUnits() {

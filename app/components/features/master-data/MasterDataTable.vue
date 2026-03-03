@@ -101,7 +101,7 @@ const tableColumns = [
   { key: 'kategori', label: 'Kategori', sortable: true },
   { key: 'subKategori', label: 'Sub Kategori' },
   { key: 'satuan', label: 'Satuan' },
-  { key: 'currentStock', label: 'Current Stock', sortable: true },
+  // { key: 'currentStock', label: 'Current Stock', sortable: true },
   { key: 'stokMin', label: 'Stok Min' },
   { key: 'status', label: 'Status', sortable: true },
   { key: 'actions', label: 'Aksi', class: 'w-24' }

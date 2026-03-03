@@ -2,30 +2,29 @@
   <div class="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gradient-to-br from-background via-background to-primary/5">
     <div class="w-full max-w-sm">
       <div class="flex flex-col gap-6">
-        <!-- Form -->
         <form @submit.prevent="handleLogin" class="flex flex-col gap-6">
           <Card class="border-border/50 shadow-lg">
             <CardContent class="py-8">
-                <!-- Logo & Title -->
-                <div class="flex flex-col items-center gap-2 text-center pb-6">
-                    <div class="mb-4">
-                      <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-primary to-primary/60 flex items-center justify-center">
-                          <img src="../assets/logo_smk_pakem.png" alt="Inventory App" class="h-8 w-8 text-primary-foreground" />
-                        </div>
-                      </div>
+              <!-- Logo & Title -->
+              <div class="flex flex-col items-center gap-2 text-center pb-6">
+                <div class="mb-4">
+                  <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-primary to-primary/60 flex items-center justify-center">
+                      <img src="../assets/logo_smk_pakem.png" alt="Inventory App" class="h-8 w-8 text-primary-foreground" />
                     </div>
-                    <div>
-                      <h1 class="text-2xl font-bold text-card-foreground mb-1">Inventory App</h1>
-                      <p class="text-sm text-muted-foreground">Sistem Inventory ATK</p>
-                    </div>
+                  </div>
                 </div>
-              
+                <div>
+                  <h1 class="text-2xl font-bold text-card-foreground mb-1">Inventory App</h1>
+                  <p class="text-sm text-muted-foreground">Sistem Inventory ATK</p>
+                </div>
+              </div>
+
               <div class="grid gap-6">
-                <!-- Username / Email -->
+                <!-- Identifier: username atau email -->
                 <div class="grid gap-3">
-                  <Label for="username" class="text-sm font-medium text-card-foreground">
-                    Email
+                  <Label for="identifier" class="text-sm font-medium text-card-foreground">
+                    Username / Email
                   </Label>
                   <div class="relative">
                     <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
@@ -35,19 +34,19 @@
                       </svg>
                     </div>
                     <Input
-                      id="username"
-                      v-model="formData.email"
-                      type="email"
-                      placeholder="Masukkan email"
-                      :class="{ 'border-destructive focus-visible:ring-destructive/20': errors.email }"
+                      id="identifier"
+                      v-model="formData.identifier"
+                      type="text"
+                      placeholder="Username atau email"
+                      :class="{ 'border-destructive focus-visible:ring-destructive/20': errors.identifier }"
                       :disabled="submitting"
-                      autocomplete="email"
+                      autocomplete="username"
                       required
                       class="pl-10"
                     />
                   </div>
-                  <p v-if="errors.email" class="text-sm text-destructive">
-                    {{ errors.email }}
+                  <p v-if="errors.identifier" class="text-sm text-destructive">
+                    {{ errors.identifier }}
                   </p>
                 </div>
 
@@ -102,25 +101,22 @@
                   {{ pesanError }}
                 </div>
 
-                <!-- Submit Button -->
-                <Button 
-                  type="submit" 
+                <!-- Submit -->
+                <Button
+                  type="submit"
                   class="w-full h-11 text-sm font-semibold mt-2"
                   :disabled="submitting"
                 >
-                  <div
-                    v-if="submitting"
-                    class="h-4 w-4 mr-2 border-2 border-current border-t-transparent rounded-full animate-spin"
-                  ></div>
+                  <div v-if="submitting" class="h-4 w-4 mr-2 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                   <span>{{ submitting ? 'Masuk...' : 'Masuk' }}</span>
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          <!-- Footer Text -->
+          <!-- Footer -->
           <div class="text-balance text-center text-xs text-muted-foreground">
-            Belum Punya Akun? 
+            Belum Punya Akun?
             <span class="font-medium text-primary hover:text-primary/80 cursor-pointer ml-1">
               Hubungi Bagian Pusat
             </span>
@@ -149,7 +145,6 @@ import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
-// Redirect jika sudah login
 onMounted(() => {
   if (authStore.isLoggedIn) navigateTo('/dashboard')
 })
@@ -158,16 +153,22 @@ const submitting = ref(false)
 const showPassword = ref(false)
 const pesanError = ref('')
 
-const formData = reactive({ email: '', password: '' })
-const errors = reactive({ email: '', password: '' })
+const formData = reactive({ identifier: '', password: '' })
+const errors = reactive({ identifier: '', password: '' })
 
 function validateForm(): boolean {
-  errors.email = ''
+  errors.identifier = ''
   errors.password = ''
   pesanError.value = ''
   let valid = true
-  if (!formData.email.trim()) { errors.email = 'Email wajib diisi'; valid = false }
-  if (!formData.password) { errors.password = 'Password wajib diisi'; valid = false }
+  if (!formData.identifier.trim()) {
+    errors.identifier = 'Username atau email wajib diisi'
+    valid = false
+  }
+  if (!formData.password) {
+    errors.password = 'Password wajib diisi'
+    valid = false
+  }
   return valid
 }
 
@@ -175,10 +176,10 @@ async function handleLogin() {
   if (!validateForm()) return
   submitting.value = true
   try {
-    await authStore.login(formData.email, formData.password)
+    await authStore.login(formData.identifier, formData.password)
     await navigateTo('/dashboard')
   } catch (err: any) {
-    pesanError.value = err.data?.message ?? 'Email atau password salah'
+    pesanError.value = err.data?.message ?? 'Username/email atau password salah'
   } finally {
     submitting.value = false
   }

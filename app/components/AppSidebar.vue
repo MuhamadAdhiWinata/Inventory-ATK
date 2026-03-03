@@ -135,6 +135,7 @@ import {
   Layers2Icon,
   LayoutGridIcon,
   RulerIcon,
+  UserIcon,
 } from 'lucide-vue-next'
 import {
   Collapsible,
@@ -202,6 +203,11 @@ const navMain = computed<NavItem[]>(() => [
     title: 'Stok',
     url: '/stock',
     icon: BoxesIcon,
+  },
+  {
+    title: 'User',
+    url: '/user',
+    icon: UserIcon,
   },
   {
     title: 'Pengaturan',

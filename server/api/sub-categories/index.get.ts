@@ -16,5 +16,10 @@ export default defineEventHandler(async () => {
     ORDER BY c.name ASC, sc.name ASC
   `
 
-  return data.map(s => ({ ...s, jumlahBarang: Number(s.jumlahBarang) }))
+    return data.map(s => ({
+    ...s,
+    id: Number(s.id),              // ← tambah ini
+    kategoriId: Number(s.kategoriId),  // ← tambah ini
+    jumlahBarang: Number(s.jumlahBarang)
+  }))
 })
