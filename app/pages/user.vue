@@ -8,10 +8,13 @@
         </div>
         <div>
           <h1 class="text-2xl font-bold tracking-tight">Manajemen User</h1>
-          <p class="text-muted-foreground text-sm">Kelola akun pengguna sistem.</p>
+          <p class="text-muted-foreground text-sm">
+            {{ isAdmin ? 'Kelola akun pengguna sistem.' : 'Informasi akun Anda.' }}
+          </p>
         </div>
       </div>
-      <button @click="bukaFormTambah"
+      <!-- Hanya ADMIN yang bisa tambah user -->
+      <button v-if="isAdmin" @click="bukaFormTambah"
         class="inline-flex items-center gap-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 transition-colors">
         <PlusIcon class="h-4 w-4" /> Tambah User
       </button>
@@ -67,22 +70,35 @@
             </td>
             <td class="p-4 hidden lg:table-cell text-muted-foreground text-sm">{{ user.email }}</td>
             <td class="p-4">
-              <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-                {{ user.role }}
+              <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border"
+                :class="user.role === 'ADMIN'
+                  ? 'bg-primary/10 text-primary border-primary/20'
+                  : 'bg-muted text-muted-foreground border-border'">
+                {{ user.role === 'ADMIN' ? 'Admin' : 'Staff' }}
               </span>
             </td>
             <td class="p-4">
               <div class="flex items-center gap-1.5">
-                <button @click="bukaFormEdit(user)" title="Edit user"
+                <!-- Edit — semua bisa edit diri sendiri, ADMIN bisa edit semua -->
+                <button
+                  v-if="isAdmin || user.id === authStore.user?.id"
+                  @click="bukaFormEdit(user)" title="Edit user"
                   class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent transition-colors">
                   <PencilIcon class="h-3.5 w-3.5" />
                 </button>
-                <button @click="bukaFormReset(user)" title="Reset password"
-                  class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/40 transition-colors">
+                <!-- Reset Password — semua bisa reset diri sendiri, ADMIN bisa reset semua -->
+                <button
+                  v-if="isAdmin || user.id === authStore.user?.id"
+                  @click="bukaFormReset(user)" title="Reset password"
+                  class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400 transition-colors">
                   <KeyRoundIcon class="h-3.5 w-3.5" />
                 </button>
-                <button @click="bukaDialogHapus(user)" title="Hapus user"
+                <!-- Hapus — hanya ADMIN, tidak bisa hapus diri sendiri -->
+                <button
+                  v-if="isAdmin"
+                  @click="bukaDialogHapus(user)"
                   :disabled="user.id === authStore.user?.id"
+                  title="Hapus user"
                   class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                   <Trash2Icon class="h-3.5 w-3.5" />
                 </button>
@@ -116,7 +132,7 @@
               <div class="space-y-1.5">
                 <label class="text-sm font-medium">Nama Lengkap <span class="text-destructive">*</span></label>
                 <input v-model="formUser.name" type="text" placeholder="Contoh: Budi Santoso"
-                  class="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition-colors"
+                  class="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   :class="{ 'border-destructive': errorsUser.name }" />
                 <p v-if="errorsUser.name" class="text-xs text-destructive">{{ errorsUser.name }}</p>
               </div>
@@ -126,7 +142,7 @@
                 <div class="relative">
                   <span class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm select-none">@</span>
                   <input v-model="formUser.username" type="text" placeholder="budisantoso"
-                    class="w-full h-9 rounded-md border border-input bg-background pl-7 pr-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition-colors"
+                    class="w-full h-9 rounded-md border border-input bg-background pl-7 pr-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     :class="{ 'border-destructive': errorsUser.username }" />
                 </div>
                 <p v-if="errorsUser.username" class="text-xs text-destructive">{{ errorsUser.username }}</p>
@@ -135,9 +151,36 @@
               <div class="space-y-1.5">
                 <label class="text-sm font-medium">Email <span class="text-destructive">*</span></label>
                 <input v-model="formUser.email" type="email" placeholder="budi@sekolah.com"
-                  class="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition-colors"
+                  class="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   :class="{ 'border-destructive': errorsUser.email }" />
                 <p v-if="errorsUser.email" class="text-xs text-destructive">{{ errorsUser.email }}</p>
+              </div>
+              <!-- Role — hanya muncul saat tambah user (ADMIN only) -->
+              <div v-if="!isEditMode" class="space-y-1.5">
+                <label class="text-sm font-medium">Role <span class="text-destructive">*</span></label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    @click="formUser.role = 'STAFF'"
+                    class="flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors"
+                    :class="formUser.role === 'STAFF'
+                      ? 'border-primary bg-primary/5 text-primary font-medium'
+                      : 'border-input bg-background hover:bg-accent'">
+                    <UserIcon class="h-4 w-4" />
+                    Staff
+                  </button>
+                  <button
+                    type="button"
+                    @click="formUser.role = 'ADMIN'"
+                    class="flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors"
+                    :class="formUser.role === 'ADMIN'
+                      ? 'border-primary bg-primary/5 text-primary font-medium'
+                      : 'border-input bg-background hover:bg-accent'">
+                    <ShieldCheckIcon class="h-4 w-4" />
+                    Admin
+                  </button>
+                </div>
+                <p v-if="errorsUser.role" class="text-xs text-destructive">{{ errorsUser.role }}</p>
               </div>
               <!-- Password (hanya tambah) -->
               <div v-if="!isEditMode" class="space-y-1.5">
@@ -145,7 +188,7 @@
                 <div class="relative">
                   <input v-model="formUser.password" :type="tampilPassword ? 'text' : 'password'"
                     placeholder="Minimal 6 karakter"
-                    class="w-full h-9 rounded-md border border-input bg-background px-3 pr-10 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition-colors"
+                    class="w-full h-9 rounded-md border border-input bg-background px-3 pr-10 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     :class="{ 'border-destructive': errorsUser.password }" />
                   <button type="button" @click="tampilPassword = !tampilPassword"
                     class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -249,13 +292,20 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default', middleware: ['auth'] })
 
-import { UsersIcon, PlusIcon, PencilIcon, Trash2Icon, XIcon, KeyRoundIcon, EyeIcon, EyeOffIcon, ShieldAlertIcon } from 'lucide-vue-next'
+import {
+  UsersIcon, PlusIcon, PencilIcon, Trash2Icon, XIcon,
+  KeyRoundIcon, EyeIcon, EyeOffIcon, ShieldAlertIcon,
+  UserIcon, ShieldCheckIcon
+} from 'lucide-vue-next'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/hooks/use-toast'
 
 const { toast } = useToast()
 const authStore = useAuthStore()
+
+// Cek apakah user saat ini adalah ADMIN
+const isAdmin = computed(() => authStore.user?.role === 'ADMIN')
 
 interface User { id: number; name: string; username: string; email: string; role: string; createdAt: string }
 
@@ -269,7 +319,7 @@ const isEditMode = ref(false)
 const sedangMenyimpan = ref(false)
 const userDipilih = ref<User | null>(null)
 const tampilPassword = ref(false)
-const formUser = reactive({ name: '', username: '', email: '', password: '' })
+const formUser = reactive({ name: '', username: '', email: '', password: '', role: 'STAFF' })
 const errorsUser = reactive<Record<string, string>>({})
 
 // Reset password
@@ -306,7 +356,7 @@ async function ambilData() {
 function bukaFormTambah() {
   isEditMode.value = false
   userDipilih.value = null
-  Object.assign(formUser, { name: '', username: '', email: '', password: '' })
+  Object.assign(formUser, { name: '', username: '', email: '', password: '', role: 'STAFF' })
   Object.keys(errorsUser).forEach(k => delete errorsUser[k])
   tampilPassword.value = false
   formTerbuka.value = true
@@ -319,6 +369,7 @@ function bukaFormEdit(user: User) {
   formUser.username = user.username
   formUser.email = user.email
   formUser.password = ''
+  formUser.role = user.role
   Object.keys(errorsUser).forEach(k => delete errorsUser[k])
   formTerbuka.value = true
 }
@@ -335,6 +386,7 @@ function validateUser(): boolean {
   else if (!/^[a-z0-9_]+$/i.test(formUser.username)) errorsUser.username = 'Hanya huruf, angka, dan underscore'
   if (!formUser.email.trim()) errorsUser.email = 'Email wajib diisi'
   if (!isEditMode.value) {
+    if (!formUser.role) errorsUser.role = 'Role wajib dipilih'
     if (!formUser.password) errorsUser.password = 'Password wajib diisi'
     else if (formUser.password.length < 6) errorsUser.password = 'Password minimal 6 karakter'
   }
@@ -352,7 +404,10 @@ async function handleSubmitUser() {
       })
       toast({ title: 'Berhasil', description: 'User berhasil diperbarui', variant: 'success' })
     } else {
-      await $fetch('/api/users', { method: 'POST', body: formUser })
+      await $fetch('/api/users', {
+        method: 'POST',
+        body: { name: formUser.name, username: formUser.username, email: formUser.email, password: formUser.password, role: formUser.role }
+      })
       toast({ title: 'Berhasil', description: 'User berhasil ditambahkan', variant: 'success' })
     }
     formTerbuka.value = false

@@ -1,12 +1,25 @@
 import bcrypt from 'bcryptjs'
 import { prisma } from '../../utils/prisma'
+import { requireAuth } from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
+  const currentUser = await requireAuth(event)
+
+  if (currentUser.role !== 'ADMIN') {
+    throw createError({ statusCode: 403, message: 'Hanya ADMIN yang dapat menambahkan user' })
+  }
+
   const body = await readBody(event)
   const { name, username, email, password, role } = body
 
   if (!name?.trim() || !username?.trim() || !email?.trim() || !password) {
     throw createError({ statusCode: 400, message: 'Semua field wajib diisi' })
+  }
+
+  // Validasi role
+  const allowedRoles = ['ADMIN', 'STAFF']
+  if (role && !allowedRoles.includes(role.toUpperCase())) {
+    throw createError({ statusCode: 400, message: 'Role tidak valid' })
   }
 
   const dupUsername = await prisma.$queryRawUnsafe<{ id: number }[]>(
@@ -32,7 +45,7 @@ export default defineEventHandler(async (event) => {
     username.trim().toLowerCase(),
     email.trim().toLowerCase(),
     passwordHash,
-    role ?? 'admin'
+    (role ?? 'STAFF').toUpperCase()
   )
 
   return { success: true, message: 'User berhasil ditambahkan' }
