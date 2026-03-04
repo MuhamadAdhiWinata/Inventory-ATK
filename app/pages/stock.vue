@@ -17,7 +17,6 @@
         <SearchIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <input
           v-model="kataPencarian"
-          @input="onSearch"
           placeholder="Cari nama atau kode barang..."
           class="w-full pl-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
@@ -34,7 +33,6 @@
       </select>
       <select
         v-model="filterStatus"
-        @change="ambilData"
         class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       >
         <option value="">Semua Status</option>
@@ -46,7 +44,7 @@
 
     <!-- Loading -->
     <div v-if="sedangMemuat" class="text-center py-12">
-      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       <p class="mt-4 text-sm text-muted-foreground">Memuat data stok...</p>
     </div>
 
@@ -83,7 +81,7 @@
         </div>
       </div>
 
-      <!-- Mode toggle: per item atau per gudang -->
+      <!-- Mode toggle -->
       <div class="flex gap-2 mb-4">
         <button
           @click="modeView = 'item'"
@@ -103,72 +101,125 @@
         </button>
       </div>
 
-      <!-- View: Per Barang (pivot table) -->
-      <div v-if="modeView === 'item'" class="border rounded-lg overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead class="border-b bg-muted/50">
-              <tr>
-                <th class="h-11 px-4 text-left font-medium text-muted-foreground sticky left-0 bg-muted/50 min-w-[200px]">Barang</th>
-                <th class="h-11 px-4 text-left font-medium text-muted-foreground">Satuan</th>
-                <th class="h-11 px-4 text-left font-medium text-muted-foreground">Min Stok</th>
-                <th
-                  v-for="gudang in daftarGudangAktif"
-                  :key="gudang.id"
-                  class="h-11 px-4 text-center font-medium text-muted-foreground min-w-[120px]"
-                >
-                  {{ gudang.name }}
-                </th>
-                <th class="h-11 px-4 text-center font-medium text-muted-foreground">Total</th>
-                <th class="h-11 px-4 text-center font-medium text-muted-foreground">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="baris in dataPerBarang"
-                :key="baris.itemId"
-                class="border-b transition-colors hover:bg-muted/30"
-              >
-                <td class="p-4 sticky left-0 bg-card hover:bg-muted/30">
-                  <p class="font-medium">{{ baris.itemName }}</p>
-                  <p class="text-xs text-muted-foreground">{{ baris.itemCode }}</p>
-                </td>
-                <td class="p-4 text-muted-foreground">{{ baris.unit }}</td>
-                <td class="p-4 text-muted-foreground">{{ baris.minStock }}</td>
-                <td
-                  v-for="gudang in daftarGudangAktif"
-                  :key="gudang.id"
-                  class="p-4 text-center"
-                >
-                  <span :class="getWarnaStokGudang(baris.stokPerGudang[gudang.id] ?? 0)">
-                    {{ baris.stokPerGudang[gudang.id] ?? 0 }}
-                  </span>
-                </td>
-                <td class="p-4 text-center font-semibold">{{ baris.totalStok }}</td>
-                <td class="p-4 text-center">
-                  <span
-                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-                    :class="getBadgeStatus(baris.totalStok, baris.minStock)"
+      <!-- ===== VIEW: PER BARANG ===== -->
+      <div v-if="modeView === 'item'">
+        <div class="border rounded-lg overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="border-b bg-muted/50">
+                <tr>
+                  <th class="h-11 px-4 text-left font-medium text-muted-foreground sticky left-0 bg-muted/50 min-w-[200px]">Barang</th>
+                  <th class="h-11 px-4 text-left font-medium text-muted-foreground">Satuan</th>
+                  <th class="h-11 px-4 text-left font-medium text-muted-foreground">Min Stok</th>
+                  <th
+                    v-for="gudang in daftarGudangAktif"
+                    :key="gudang.id"
+                    class="h-11 px-4 text-center font-medium text-muted-foreground min-w-[120px]"
                   >
-                    {{ getLabelStatus(baris.totalStok, baris.minStock) }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    {{ gudang.name }}
+                  </th>
+                  <th class="h-11 px-4 text-center font-medium text-muted-foreground">Total</th>
+                  <th class="h-11 px-4 text-center font-medium text-muted-foreground">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="baris in dataPerBarangPaged"
+                  :key="baris.itemId"
+                  class="border-b transition-colors hover:bg-muted/30"
+                >
+                  <td class="p-4 sticky left-0 bg-card hover:bg-muted/30">
+                    <p class="font-medium">{{ baris.itemName }}</p>
+                    <p class="text-xs text-muted-foreground">{{ baris.itemCode }}</p>
+                  </td>
+                  <td class="p-4 text-muted-foreground">{{ baris.unit }}</td>
+                  <td class="p-4 text-muted-foreground">{{ baris.minStock }}</td>
+                  <td
+                    v-for="gudang in daftarGudangAktif"
+                    :key="gudang.id"
+                    class="p-4 text-center"
+                  >
+                    <span :class="getWarnaStok(baris.stokPerGudang[gudang.id] ?? 0, baris.minStock)">
+                      {{ baris.stokPerGudang[gudang.id] ?? 0 }}
+                    </span>
+                  </td>
+                  <td class="p-4 text-center font-semibold">{{ baris.totalStok }}</td>
+                  <td class="p-4 text-center">
+                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                      :class="getBadgeStatus(baris.totalStok, baris.minStock)">
+                      {{ getLabelStatus(baris.totalStok, baris.minStock) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty -->
+          <div v-if="dataPerBarangFiltered.length === 0" class="text-center py-12">
+            <div class="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
+              <PackageIcon class="h-6 w-6 text-muted-foreground" />
+            </div>
+            <h3 class="font-semibold mb-1">Tidak Ada Data</h3>
+            <p class="text-sm text-muted-foreground">Belum ada stok yang tercatat.</p>
+          </div>
         </div>
 
-        <!-- Empty -->
-        <div v-if="dataPerBarang.length === 0" class="text-center py-12">
-          <div class="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-            <PackageIcon class="h-6 w-6 text-muted-foreground" />
+        <!-- Pagination Per Barang -->
+        <div v-if="totalPagesItem > 1" class="flex items-center justify-between mt-4 px-1">
+          <p class="text-sm text-muted-foreground">
+            Menampilkan {{ rangeAwal }} – {{ rangeAkhir }} dari {{ dataPerBarangFiltered.length }} barang
+          </p>
+          <div class="flex items-center gap-1">
+            <button
+              @click="currentPageItem = 1"
+              :disabled="currentPageItem === 1"
+              class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronsLeftIcon class="h-4 w-4" />
+            </button>
+            <button
+              @click="currentPageItem--"
+              :disabled="currentPageItem === 1"
+              class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeftIcon class="h-4 w-4" />
+            </button>
+
+            <!-- Page numbers -->
+            <template v-for="page in halamanTampil" :key="page">
+              <span v-if="page === '...'" class="h-8 w-8 inline-flex items-center justify-center text-sm text-muted-foreground">...</span>
+              <button
+                v-else
+                @click="currentPageItem = Number(page)"
+                class="h-8 w-8 inline-flex items-center justify-center rounded-md border text-sm transition-colors"
+                :class="currentPageItem === page
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-input bg-background hover:bg-accent'"
+              >
+                {{ page }}
+              </button>
+            </template>
+
+            <button
+              @click="currentPageItem++"
+              :disabled="currentPageItem === totalPagesItem"
+              class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRightIcon class="h-4 w-4" />
+            </button>
+            <button
+              @click="currentPageItem = totalPagesItem"
+              :disabled="currentPageItem === totalPagesItem"
+              class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-input bg-background text-sm hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronsRightIcon class="h-4 w-4" />
+            </button>
           </div>
-          <h3 class="font-semibold mb-1">Tidak Ada Data</h3>
-          <p class="text-sm text-muted-foreground">Belum ada stok yang tercatat.</p>
         </div>
       </div>
 
-      <!-- View: Per Gudang -->
+      <!-- ===== VIEW: PER GUDANG ===== -->
       <div v-else class="space-y-4">
         <div
           v-for="gudang in daftarGudangAktif"
@@ -182,7 +233,7 @@
               <span v-if="gudang.location" class="text-xs text-muted-foreground">— {{ gudang.location }}</span>
             </div>
             <span class="text-xs text-muted-foreground">
-              {{ getJumlahItemGudang(gudang.id) }} item
+              {{ getItemPerGudang(gudang.id).length }} item
             </span>
           </div>
           <div class="overflow-x-auto">
@@ -198,7 +249,7 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="item in getItemPerGudang(gudang.id)"
+                  v-for="item in getItemPerGudangPaged(gudang.id)"
                   :key="item.itemId"
                   class="border-b transition-colors hover:bg-muted/30"
                 >
@@ -208,16 +259,14 @@
                   </td>
                   <td class="p-3 text-muted-foreground">{{ item.unit }}</td>
                   <td class="p-3 text-center">
-                    <span :class="getWarnaStokGudang(item.quantity)" class="font-semibold">
+                    <span :class="getWarnaStok(item.quantity, item.minStock)" class="font-semibold">
                       {{ item.quantity }}
                     </span>
                   </td>
                   <td class="p-3 text-center text-muted-foreground">{{ item.minStock }}</td>
                   <td class="p-3 text-center">
-                    <span
-                      class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-                      :class="getBadgeStatus(item.quantity, item.minStock)"
-                    >
+                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                      :class="getBadgeStatus(item.quantity, item.minStock)">
                       {{ getLabelStatus(item.quantity, item.minStock) }}
                     </span>
                   </td>
@@ -226,7 +275,34 @@
             </table>
           </div>
 
-          <!-- Empty per gudang -->
+          <!-- Pagination per gudang -->
+          <div v-if="getTotalPagesGudang(gudang.id) > 1"
+            class="flex items-center justify-between px-4 py-2.5 border-t bg-muted/20">
+            <p class="text-xs text-muted-foreground">
+              Hal {{ getCurrentPageGudang(gudang.id) }} / {{ getTotalPagesGudang(gudang.id) }}
+              · {{ getItemPerGudang(gudang.id).length }} item
+            </p>
+            <div class="flex items-center gap-1">
+              <button
+                @click="setPageGudang(gudang.id, getCurrentPageGudang(gudang.id) - 1)"
+                :disabled="getCurrentPageGudang(gudang.id) === 1"
+                class="h-7 w-7 inline-flex items-center justify-center rounded-md border border-input bg-background text-xs hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeftIcon class="h-3.5 w-3.5" />
+              </button>
+              <span class="text-xs px-2 text-muted-foreground">
+                {{ getCurrentPageGudang(gudang.id) }} / {{ getTotalPagesGudang(gudang.id) }}
+              </span>
+              <button
+                @click="setPageGudang(gudang.id, getCurrentPageGudang(gudang.id) + 1)"
+                :disabled="getCurrentPageGudang(gudang.id) === getTotalPagesGudang(gudang.id)"
+                class="h-7 w-7 inline-flex items-center justify-center rounded-md border border-input bg-background text-xs hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronRightIcon class="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+
           <div v-if="getItemPerGudang(gudang.id).length === 0" class="text-center py-6 text-sm text-muted-foreground">
             Tidak ada stok di gudang ini.
           </div>
@@ -237,16 +313,16 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-    layout: 'default',
-    middleware: ['auth']
-})
+definePageMeta({ layout: 'default', middleware: ['auth'] })
 
-import { WarehouseIcon, SearchIcon, AlertCircleIcon, PackageIcon } from 'lucide-vue-next'
+import {
+  WarehouseIcon, SearchIcon, AlertCircleIcon, PackageIcon,
+  ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon
+} from 'lucide-vue-next'
 import type { GudangItem } from '#shared/types/IInventory'
 import { inventoryService } from '@/services/inventoryService'
 
-// State
+// ===== STATE =====
 const sedangMemuat = ref(false)
 const pesanError = ref<string | null>(null)
 const kataPencarian = ref('')
@@ -254,10 +330,8 @@ const filterGudang = ref<number | ''>('')
 const filterStatus = ref('')
 const modeView = ref<'item' | 'gudang'>('item')
 
-// Lookup
 const daftarGudang = ref<GudangItem[]>([])
 
-// Raw data dari API
 interface BarisStok {
   itemId: number
   itemCode: string
@@ -271,7 +345,32 @@ interface BarisStok {
 }
 const dataStokMentah = ref<BarisStok[]>([])
 
-// Gudang yang aktif (punya stok atau semua jika tidak filter)
+// ===== PAGINATION =====
+const ITEMS_PER_PAGE = 8
+const currentPageItem = ref(1)
+// Page per gudang — key: gudangId, value: currentPage
+const pagePerGudang = ref<Record<number, number>>({})
+
+function getCurrentPageGudang(gudangId: number): number {
+  return pagePerGudang.value[gudangId] ?? 1
+}
+
+function setPageGudang(gudangId: number, page: number) {
+  const total = getTotalPagesGudang(gudangId)
+  pagePerGudang.value[gudangId] = Math.max(1, Math.min(total, page))
+}
+
+function getTotalPagesGudang(gudangId: number): number {
+  return Math.max(1, Math.ceil(getItemPerGudang(gudangId).length / ITEMS_PER_PAGE))
+}
+
+// Reset page ke 1 saat filter/search berubah
+watch([kataPencarian, filterStatus, filterGudang, modeView], () => {
+  currentPageItem.value = 1
+  pagePerGudang.value = {}
+})
+
+// ===== COMPUTED =====
 const daftarGudangAktif = computed(() => {
   if (filterGudang.value) {
     return daftarGudang.value.filter(g => g.id === Number(filterGudang.value))
@@ -279,10 +378,8 @@ const daftarGudangAktif = computed(() => {
   return daftarGudang.value
 })
 
-// Data yang sudah difilter kata pencarian + status
 const dataStokFiltered = computed(() => {
   let data = dataStokMentah.value
-
   if (kataPencarian.value) {
     const kata = kataPencarian.value.toLowerCase()
     data = data.filter(d =>
@@ -290,11 +387,9 @@ const dataStokFiltered = computed(() => {
       d.itemCode.toLowerCase().includes(kata)
     )
   }
-
   return data
 })
 
-// Pivot: per barang → stok di setiap gudang
 interface BarisPerBarang {
   itemId: number
   itemCode: string
@@ -305,9 +400,9 @@ interface BarisPerBarang {
   totalStok: number
 }
 
-const dataPerBarang = computed(() => {
+// Semua data pivot (untuk summary cards — tidak dipaginate)
+const dataPerBarangFiltered = computed(() => {
   const grup: Record<number, BarisPerBarang> = {}
-
   for (const baris of dataStokFiltered.value) {
     if (!grup[baris.itemId]) {
       grup[baris.itemId] = {
@@ -327,42 +422,70 @@ const dataPerBarang = computed(() => {
 
   let hasil = Object.values(grup).sort((a, b) => a.itemName.localeCompare(b.itemName))
 
-  if (filterStatus.value === 'aman') {
-    hasil = hasil.filter(b => b.totalStok > b.minStock)
-  } else if (filterStatus.value === 'restock') {
-    hasil = hasil.filter(b => b.totalStok > 0 && b.totalStok <= b.minStock)
-  } else if (filterStatus.value === 'kosong') {
-    hasil = hasil.filter(b => b.totalStok === 0)
-  }
+  if (filterStatus.value === 'aman') hasil = hasil.filter(b => b.totalStok > b.minStock)
+  else if (filterStatus.value === 'restock') hasil = hasil.filter(b => b.totalStok > 0 && b.totalStok <= b.minStock)
+  else if (filterStatus.value === 'kosong') hasil = hasil.filter(b => b.totalStok === 0)
 
   return hasil
 })
 
-// Summary cards
+// Slice untuk halaman aktif
+const dataPerBarangPaged = computed(() => {
+  const start = (currentPageItem.value - 1) * ITEMS_PER_PAGE
+  return dataPerBarangFiltered.value.slice(start, start + ITEMS_PER_PAGE)
+})
+
+const totalPagesItem = computed(() =>
+  Math.max(1, Math.ceil(dataPerBarangFiltered.value.length / ITEMS_PER_PAGE))
+)
+
+const rangeAwal = computed(() => (currentPageItem.value - 1) * ITEMS_PER_PAGE + 1)
+const rangeAkhir = computed(() =>
+  Math.min(currentPageItem.value * ITEMS_PER_PAGE, dataPerBarangFiltered.value.length)
+)
+
+// Nomor halaman yang ditampilkan (max 5 tombol + ellipsis)
+const halamanTampil = computed(() => {
+  const total = totalPagesItem.value
+  const cur = currentPageItem.value
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+
+  const pages: (number | string)[] = [1]
+  if (cur > 3) pages.push('...')
+  for (let i = Math.max(2, cur - 1); i <= Math.min(total - 1, cur + 1); i++) pages.push(i)
+  if (cur < total - 2) pages.push('...')
+  pages.push(total)
+  return pages
+})
+
+// Summary cards — hitung dari semua data (bukan page aktif)
 const ringkasan = computed(() => {
-  const semuaItem = dataPerBarang.value
+  const semua = dataPerBarangFiltered.value
   return {
-    totalItem: semuaItem.length,
-    itemAman: semuaItem.filter(b => b.totalStok > b.minStock).length,
-    itemRestock: semuaItem.filter(b => b.totalStok > 0 && b.totalStok <= b.minStock).length,
-    itemKosong: semuaItem.filter(b => b.totalStok === 0).length,
+    totalItem: semua.length,
+    itemAman: semua.filter(b => b.totalStok > b.minStock).length,
+    itemRestock: semua.filter(b => b.totalStok > 0 && b.totalStok <= b.minStock).length,
+    itemKosong: semua.filter(b => b.totalStok === 0).length,
   }
 })
 
-// Item per gudang untuk view per gudang
+// Per gudang
 function getItemPerGudang(gudangId: number): BarisStok[] {
   return dataStokFiltered.value
     .filter(d => d.gudangId === gudangId)
     .sort((a, b) => a.itemName.localeCompare(b.itemName))
 }
 
-function getJumlahItemGudang(gudangId: number): number {
-  return getItemPerGudang(gudangId).length
+function getItemPerGudangPaged(gudangId: number): BarisStok[] {
+  const page = getCurrentPageGudang(gudangId)
+  const start = (page - 1) * ITEMS_PER_PAGE
+  return getItemPerGudang(gudangId).slice(start, start + ITEMS_PER_PAGE)
 }
 
-// Helper warna dan badge
-function getWarnaStokGudang(jumlah: number): string {
-  if (jumlah === 0) return 'text-muted-foreground'
+// ===== HELPERS =====
+function getWarnaStok(jumlah: number, minStok: number): string {
+  if (jumlah === 0) return 'text-destructive font-semibold'
+  if (jumlah <= minStok) return 'text-amber-600 dark:text-amber-400 font-semibold'
   return 'text-foreground'
 }
 
@@ -378,14 +501,13 @@ function getLabelStatus(stok: number, minStok: number): string {
   return 'Aman'
 }
 
-// Fetch data stok
+// ===== FETCH =====
 const ambilData = async () => {
   sedangMemuat.value = true
   pesanError.value = null
   try {
     const params: Record<string, any> = {}
     if (filterGudang.value) params.gudangId = filterGudang.value
-
     dataStokMentah.value = await $fetch<BarisStok[]>('/api/stock', { params })
   } catch (err) {
     pesanError.value = 'Gagal memuat data stok.'
@@ -393,13 +515,6 @@ const ambilData = async () => {
   } finally {
     sedangMemuat.value = false
   }
-}
-
-// Debounce pencarian
-let waktuTunggu: number
-const onSearch = () => {
-  clearTimeout(waktuTunggu)
-  waktuTunggu = window.setTimeout(() => ambilData(), 300)
 }
 
 onMounted(async () => {
